@@ -91,6 +91,20 @@ Agar batas lampiran aplikasi 10 MB dapat dipenuhi, konfigurasi PHP/web server ha
    php .\bin\create-admin.php
    ```
 
+## Menggunakan Neon dengan Vercel
+
+Untuk berbagi data antar pengguna, aplikasi harus terhubung ke database PostgreSQL online. Pengguna mengakses data melalui aplikasi; jangan membagikan kredensial database atau mengizinkan koneksi tanpa pembatasan.
+
+1. Buat database PostgreSQL di Neon, lalu catat host, port, nama database, pengguna, dan kata sandi dari connection details Neon.
+2. Atur variabel berikut pada **Vercel → Project → Settings → Environment Variables** untuk environment yang digunakan:
+   - `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`
+   - `PGSSLMODE=require`
+   - `SESSION_SECRET` dengan nilai acak minimal 32 karakter
+3. Terapkan `database/schema.sql` satu kali ke database Neon, misalnya melalui SQL Editor Neon. Jangan jalankan setup lokal yang menargetkan database lain jika tujuannya memakai Neon.
+4. Deploy ulang setelah variabel diatur. Jangan memasukkan kredensial ke GitHub atau file `.env.example`.
+
+Aplikasi harus berjalan sebagai backend PHP agar dapat memakai database ini. Konfigurasi database saja tidak membuat file PHP berjalan di Vercel. Lampiran dan sesi juga memerlukan penyimpanan bersama/persisten sebelum aplikasi digunakan penuh di lingkungan serverless.
+
 ## Menjalankan aplikasi
 
 Jalankan server PHP bawaan dari direktori proyek:
