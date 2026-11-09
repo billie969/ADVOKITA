@@ -82,6 +82,7 @@ function database(): PDO
     $host = getenv('PGHOST') ?: '127.0.0.1';
     $port = getenv('PGPORT') ?: '5432';
     $name = getenv('PGDATABASE') ?: 'advokita';
+
     $user = getenv('PGUSER') ?: 'advokitatia';
     $password = getenv('PGPASSWORD');
     if ($password === false || $password === '') {
@@ -90,6 +91,18 @@ function database(): PDO
 
     $connection = new PDO(
         "pgsql:host={$host};port={$port};dbname={$name}",
+    $user = getenv('PGUSER') ?: 'advokitatia';
+    $password = getenv('PGPASSWORD');
+    $sslMode = getenv('PGSSLMODE') ?: 'prefer';
+    if ($password === false || $password === '') {
+        throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi lokal.');
+    }
+    if (!in_array($sslMode, ['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'], true)) {
+        throw new RuntimeException('PGSSLMODE tidak valid.');
+    }
+
+    $connection = new PDO(
+        "pgsql:host={$host};port={$port};dbname={$name};sslmode={$sslMode}", 4044e1f7f5ee594eb8337fad9139ee782002a22f
         $user,
         $password,
         [
