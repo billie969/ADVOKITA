@@ -84,12 +84,16 @@ function database(): PDO
     $name = getenv('PGDATABASE') ?: 'advokita';
     $user = getenv('PGUSER') ?: 'advokita_app';
     $password = getenv('PGPASSWORD');
+    $sslMode = getenv('PGSSLMODE') ?: 'prefer';
     if ($password === false || $password === '') {
         throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi lokal.');
     }
+    if (!in_array($sslMode, ['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'], true)) {
+        throw new RuntimeException('PGSSLMODE tidak valid.');
+    }
 
     $connection = new PDO(
-        "pgsql:host={$host};port={$port};dbname={$name}",
+        "pgsql:host={$host};port={$port};dbname={$name};sslmode={$sslMode}",
         $user,
         $password,
         [
