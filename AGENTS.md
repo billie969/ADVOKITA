@@ -1,37 +1,37 @@
-# figma-make-app
+# Panduan Proyek ADVOKITA
 
-React + Vite + Tailwind CSS project running inside Figma Make.
+## Stack dan batasan
 
-## Development Server
+ADVOKITA menggunakan PHP 8.1 atau lebih baru, PostgreSQL melalui PDO, serta HTML dan CSS. JavaScript dilarang sepenuhnya: jangan menambahkan kode inline atau eksternal, elemen `<script>`, berkas `.js`, Node.js, npm/pnpm, Vite, atau antarmuka yang memerlukan skrip.
 
-A Vite development server is **already running** on `$PORT` (default 8443). You don't need to start it manually.
+Gunakan form HTML POST, validasi dan rendering server-side, sesi PHP, serta komponen Bootstrap CSS-only. Pertahankan dukungan browser tanpa JavaScript.
 
-- Preview URL: The user can access the running app through the preview panel
-- Hot reload: Changes to source files are reflected immediately
+## Struktur sumber
 
-## Project Structure
+- `public/index.php` adalah front controller dan satu-satunya titik masuk web; arah halaman memakai parameter `page`.
+- `app/bootstrap.php` mengatur sesi, koneksi PDO, proteksi CSRF, validasi, serta akses data bersama.
+- `templates/layout.php` dan `templates/pages/` berisi markup HTML server-side.
+- `public/assets/css/` dan `public/assets/` memuat CSS, ikon, dan gambar yang disajikan publik.
+- `database/schema.sql` adalah skema PostgreSQL.
+- `bin/` berisi utilitas PHP untuk menyiapkan tabel dan membuat akun admin.
+- `scripts/setup-local-db.ps1` menyiapkan role dan database PostgreSQL lokal di Laragon.
+- `tests/validation.php` menjalankan pengujian validasi tanpa framework tambahan.
+- `storage/uploads/` menyimpan bukti secara privat di luar document root `public/`.
 
-This is the canonical project structure. Start with task-relevant files below. Only follow imports or inspect other files when required, when a documented path is missing, or when the repository contradicts this guide.
+## Ketentuan keamanan
 
-- `src/main.tsx` - React entrypoint; imports `src/index.css` and mounts `src/App.tsx` into the `#root` element
-- `src/App.tsx` - Primary application component and the usual starting point for UI work
-- `src/index.css` - Global CSS entrypoint and Tailwind CSS v4 import
-- `index.html` - Vite HTML shell containing the `#root` element and loading `src/main.tsx`
-- `package.json` - Project dependencies and the Vite build, development, preview, and formatting scripts
-- `vite.config.ts` - Vite configuration with React, Tailwind CSS v4, and Figma Make plugins plus the `@` alias for `src`
-- `.mise.toml` - Toolchain versions for Node.js and pnpm
+- Validasi input di server; gunakan prepared statements PDO.
+- Lindungi seluruh aksi POST dengan token CSRF. Cek autentikasi, peran, dan kepemilikan pada setiap operasi laporan maupun lampiran.
+- Gunakan `password_hash`/`password_verify`, rotasi ID sesi saat autentikasi, dan cookie HTTP-only/SameSite.
+- Batasi serta deteksi tipe konten berkas berdasarkan isi; jangan menaruh unggahan di direktori publik.
+- Escape nilai dinamis saat dirender ke HTML. Jangan mengandalkan validasi browser sebagai pengganti validasi server.
+- Jangan commit `.env`, kata sandi, token, atau rahasia.
 
-## Dependencies
+## Verifikasi
 
-- Runtime: React 19 and React DOM 19
-- Styling: Tailwind CSS v4 with the `@tailwindcss/vite` plugin
-- Build tooling: Vite 8, TypeScript 5.7, and `@vitejs/plugin-react`
-- Formatting: oxfmt
+- `php tests/validation.php` menjalankan tes validasi.
+- `php -l <berkas.php>` memeriksa sintaks PHP.
+- `php bin/setup-database.php` menerapkan skema; perintah ini memerlukan koneksi database terkonfigurasi.
+- Pastikan berkas sumber maupun keluaran publik tidak memuat JavaScript atau elemen `<script>`.
 
-## Styling
-
-This project uses **Tailwind CSS v4** through the `@tailwindcss/vite` plugin configured in `vite.config.ts`. `src/index.css` imports Tailwind with `@import 'tailwindcss';`. Use Tailwind utility classes directly in JSX and put global CSS or Tailwind v4 theme customization in `src/index.css`. This scaffold does not need a Tailwind config file or PostCSS config.
-
-`src/main.tsx` imports `src/index.css`, so global font wiring belongs in `src/index.css`. Keep CSS `@import` statements first, then add any `@font-face` rules and font-family defaults there.
-
-Tailwind emits utility classes in `@layer utilities`, and CSS outside any cascade layer overrides every layer regardless of specificity. Put global element styles, such as resets and defaults for `body`, headings, `button`, or `input`, inside `@layer base { ... }` so utility classes on those elements still apply. Tailwind's Preflight already applies `box-sizing: border-box`, removes default margins, and sets `font: inherit` on form controls, so do not repeat those rules.
+Lihat `read.md` dan `README.md` untuk cara instalasi dan penggunaan lokal.

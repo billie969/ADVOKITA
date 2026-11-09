@@ -1,14 +1,14 @@
 node_modules/
 dist/
 build/
+vendor/
 .cache/
 .env*
-.vite/
-vite.config.*.timestamp-*
-*.tsbuildinfo
+!.env.example
 *-debug.log*
 logs/
 *.log
+/storage/
 .claude-replay.*
 .tmp-*
 /.figma/design-context/
