@@ -2,3 +2,5 @@
 NIXPACKS_PHP_ROOT_DIR = "/app/public"
 RAILPACK_PHP_ROOT_DIR = "/app/public"
 
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t public"
