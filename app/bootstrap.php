@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 const APP_ROOT = __DIR__ . '/..';
-const UPLOAD_DIRECTORY = APP_ROOT . '/storage/uploads';
+$defaultUploadDirectory = (getenv('VERCEL') !== false || !empty($_ENV['VERCEL']))
+    ? sys_get_temp_dir() . '/advokita_uploads'
+    : APP_ROOT . '/storage/uploads';
+define('UPLOAD_DIRECTORY', getenv('UPLOAD_DIRECTORY') ?: $defaultUploadDirectory);
 const REPORT_CATEGORIES = [
     'UKT & Finansial',
     'Kekerasan & PPKS',
@@ -82,27 +85,20 @@ function database(): PDO
     $host = getenv('PGHOST') ?: '127.0.0.1';
     $port = getenv('PGPORT') ?: '5432';
     $name = getenv('PGDATABASE') ?: 'advokita';
-
-    $user = getenv('PGUSER') ?: 'advokitatia';
+    $user = getenv('PGUSER') ?: 'advokita_app';
     $password = getenv('PGPASSWORD');
     if ($password === false || $password === '') {
-        throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi lokal.');
+        throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi database.');
+    }
+
+    $sslmode = getenv('PGSSLMODE') ?: ($host !== '127.0.0.1' && $host !== 'localhost' ? 'require' : '');
+    $dsn = "pgsql:host={$host};port={$port};dbname={$name}";
+    if ($sslmode !== '') {
+        $dsn .= ";sslmode={$sslmode}";
     }
 
     $connection = new PDO(
-        "pgsql:host={$host};port={$port};dbname={$name}",
-    $user = getenv('PGUSER') ?: 'advokitatia';
-    $password = getenv('PGPASSWORD');
-    $sslMode = getenv('PGSSLMODE') ?: 'prefer';
-    if ($password === false || $password === '') {
-        throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi lokal.');
-    }
-    if (!in_array($sslMode, ['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'], true)) {
-        throw new RuntimeException('PGSSLMODE tidak valid.');
-    }
-
-    $connection = new PDO(
-        "pgsql:host={$host};port={$port};dbname={$name};sslmode={$sslMode}", 4044e1f7f5ee594eb8337fad9139ee782002a22f
+        $dsn,
         $user,
         $password,
         [
