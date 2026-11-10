@@ -11,20 +11,20 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
 
 | No | Nama Anggota | NPM | Peran Utama |
 |---|---|---|---|
-| 1 | **Billie Abyan Afif** | 2415061007 | Project Lead & Core Backend Architecture |
+| 1 | **Rizky Ahmad Fahrezi** | 2415061031 | Project Lead & Core Backend Architecture |
 | 2 | **Ichtiari Khoirunnisa** | 2415061038 | Fullstack: Modul Administrasi & Pengumuman |
 | 3 | **Muhammad Akbar Prayuga** | 2415061017 | Fullstack: Modul Pelaporan Pengaduan & Unggah Berkas |
 | 4 | **Natasya Surya Ramadhani** | 2455061002 | Fullstack: Modul Dashboard Mahasiswa & Riwayat Kasus |
-| 5 | **Rizky Ahmad Fahrezi** | 2415061031 | Fullstack: Modul Autentikasi, UI Layout & Styling |
+| 5 | **Billie Abyan Afif** | 2415061007 | Fullstack: Modul Autentikasi, UI Layout & Styling |
 
 ---
 
 ## 🛠️ Pembagian Jobdesk & Berkas yang Dikerjakan
 
-### 1. Billie Abyan Afif (2415061007)
-- **Fokus:** *Core Backend Architecture, Database Design & Cloud Deployment*
+### 1. Rizky Ahmad Fahrezi (2415061031)
+- **Fokus:** *Project Lead, Core Backend Architecture, Database Design & Cloud Deployment*
 - **Rincian Pekerjaan:**
-  - Merancang arsitektur backend, manajemen sesi aman (`advokita_sid`), proteksi token CSRF, dan konfigurasi koneksi `PDO` PostgreSQL (dengan dukungan SSL/TLS untuk database lokal maupun cloud).
+  - Mengkoordinasikan arsitektur proyek secara keseluruhan, manajemen sesi aman (`advokita_sid`), proteksi token CSRF, dan konfigurasi koneksi `PDO` PostgreSQL (dengan dukungan SSL/TLS untuk database lokal maupun cloud).
   - Merancang skema basis data relasional, aturan constraint, sequence nomor kasus otomatis, dan indeks performa pencarian.
   - Mengonfigurasi otomatisasi deployment kontainer Docker dan runner environment server.
 - **Berkas yang Dibuat / Dikelola:**
@@ -74,7 +74,7 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
 
 ---
 
-### 5. Rizky Ahmad Fahrezi (2415061031)
+### 5. Billie Abyan Afif (2415061007)
 - **Fokus:** *Frontend & Backend: Modul Autentikasi, UI Layout & Styling Responsif*
 - **Rincian Pekerjaan:**
   - Merancang kerangka layout aplikasi bersama (header desktop responsif, mobile bottom navigation bar, alert notifikasi).
