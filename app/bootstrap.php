@@ -39,7 +39,8 @@ foreach ([APP_ROOT . '/.env', APP_ROOT . '/.env.example'] as $environmentFile) {
     }
 }
 
-$isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off';
+$isSecure = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off')
+    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
 session_name('advokita_sid');
 session_set_cookie_params([
     'lifetime' => 8 * 60 * 60,
