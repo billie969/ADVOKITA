@@ -12,7 +12,6 @@
       <?php csrf_input(); ?>
       <input type="hidden" name="action" value="login">
       <div class="mb-4"><h2>Masuk ke ADVOKITA</h2><p class="text-secondary mb-0">Gunakan akun mahasiswa atau admin Anda.</p></div>
-      <div class="mb-4"><h2>LOGIN ke ADVOKITA</h2><p class="text-secondary mb-0">Gunakan akun mahasiswa atau admin Anda.</p></div>
 
       <div class="mb-3">
         <label class="form-label" for="loginNim">NPM <span class="text-danger">*</span></label>
