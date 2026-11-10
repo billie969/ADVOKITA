@@ -57,7 +57,7 @@ p {
 .auth-page {
   position: relative;
   isolation: isolate;
-  background: #620008 url('/assets/1fdc9.png') center / cover fixed;
+  background: #620008 url('/assets/1fdc9.png') center / cover no-repeat fixed !important;
 }
 
 .auth-page::before {

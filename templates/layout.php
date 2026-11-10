@@ -17,7 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="/assets/css/styles.css" rel="stylesheet">
   </head>
-  <body class="<?= in_array($page, ['login', 'register'], true) ? 'auth-page bg-light' : 'd-flex flex-column h-100 bg-light' ?>" data-page="<?= escape($page) ?>">
+  <body class="<?= in_array($page, ['login', 'register'], true) ? 'auth-page' : 'd-flex flex-column h-100 bg-light' ?>" data-page="<?= escape($page) ?>">
     <?php if (!in_array($page, ['login', 'register'], true)): ?>
       <header class="site-header bg-white border-bottom shadow-sm sticky-top">
         <div class="container d-flex align-items-center justify-content-between py-2 py-md-0" style="min-height: 70px;">
