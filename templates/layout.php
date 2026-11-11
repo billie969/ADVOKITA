@@ -42,6 +42,9 @@
               <a class="px-3 py-2 rounded-2 text-decoration-none fw-medium <?= in_array($page, ['history', 'detail'], true) ? 'active bg-danger text-white' : 'text-secondary hover-bg-light' ?>" href="<?= escape(url('history')) ?>">
                 <i class="bi bi-clock-history me-1" aria-hidden="true"></i><span>Riwayat</span>
               </a>
+              <a class="px-3 py-2 rounded-2 text-decoration-none fw-medium <?= $page === 'tentangkami' ? 'active bg-danger text-white' : 'text-secondary hover-bg-light' ?>" href="<?= escape(url('tentangkami')) ?>">
+                <i class="bi bi-info-circle me-1" aria-hidden="true"></i><span>Tentang Kami</span>
+              </a>
             </nav>
           <?php endif; ?>
 
@@ -105,6 +108,9 @@
           </a>
           <a class="d-flex flex-column align-items-center text-decoration-none <?= in_array($page, ['history', 'detail'], true) ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('history')) ?>">
             <i class="bi bi-clock-history fs-5" aria-hidden="true"></i><span style="font-size: 0.7rem;">Riwayat</span>
+          </a>
+          <a class="d-flex flex-column align-items-center text-decoration-none <?= $page === 'tentangkami' ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('tentangkami')) ?>">
+            <i class="bi bi-info-circle fs-5" aria-hidden="true"></i><span style="font-size: 0.7rem;">Tentang</span>
           </a>
         </nav>
       <?php endif; ?>
