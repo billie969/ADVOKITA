@@ -13,8 +13,12 @@
     <meta name="description" content="Portal pengaduan dan bantuan hukum mahasiswa ADVOKITA">
     <title><?= escape($title) ?> — ADVOKITA</title>
     <link rel="icon" href="/favicon.svg">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="/assets/css/core.css" rel="stylesheet">
+    <link href="/assets/css/layout.css" rel="stylesheet">
     <link href="/assets/css/styles.css" rel="stylesheet">
   </head>
   <body class="<?= in_array($page, ['login', 'register'], true) ? 'auth-page' : 'd-flex flex-column h-100 bg-light' ?>" data-page="<?= escape($page) ?>">
@@ -42,7 +46,7 @@
               <a class="px-3 py-2 rounded-2 text-decoration-none fw-medium <?= in_array($page, ['history', 'detail'], true) ? 'active bg-danger text-white' : 'text-secondary hover-bg-light' ?>" href="<?= escape(url('history')) ?>">
                 <i class="bi bi-clock-history me-1" aria-hidden="true"></i><span>Riwayat</span>
               </a>
-              <a class="px-3 py-2 rounded-2 text-decoration-none fw-medium <?= $page === 'tentangkami' ? 'active bg-danger text-white' : 'text-secondary hover-bg-light' ?>" href="<?= escape(url('tentangkami')) ?>">
+              <a class="px-3 py-2 rounded-2 text-decoration-none fw-medium <?= in_array($page, ['tentangkami', 'about', 'about-profile', 'about-vision-mission', 'about-structure', 'about-services', 'about-contact'], true) ? 'active bg-danger text-white' : 'text-secondary hover-bg-light' ?>" href="<?= escape(url('tentangkami')) ?>">
                 <i class="bi bi-info-circle me-1" aria-hidden="true"></i><span>Tentang Kami</span>
               </a>
             </nav>
@@ -115,7 +119,7 @@
           <a class="d-flex flex-column align-items-center text-decoration-none <?= in_array($page, ['history', 'detail'], true) ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('history')) ?>">
             <i class="bi bi-clock-history fs-5" aria-hidden="true"></i><span style="font-size: 0.7rem;">Riwayat</span>
           </a>
-          <a class="d-flex flex-column align-items-center text-decoration-none <?= $page === 'tentangkami' ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('tentangkami')) ?>">
+          <a class="d-flex flex-column align-items-center text-decoration-none <?= in_array($page, ['tentangkami', 'about', 'about-profile', 'about-vision-mission', 'about-structure', 'about-services', 'about-contact'], true) ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('tentangkami')) ?>">
             <i class="bi bi-info-circle fs-5" aria-hidden="true"></i><span style="font-size: 0.7rem;">Tentang</span>
           </a>
         </nav>

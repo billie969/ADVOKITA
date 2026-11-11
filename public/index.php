@@ -177,6 +177,7 @@ $pageNames = [
     'attachment',
 
     // HALAMAN TENTANG KAMI
+    'tentangkami',
     'about',
     'about-profile',
     'about-vision-mission',
@@ -559,6 +560,7 @@ try {
     }
 
     $aboutPages = [
+        'tentangkami',
         'about',
         'about-profile',
         'about-vision-mission',
@@ -567,7 +569,7 @@ try {
         'about-contact',
     ];
 
-    if (!in_array($page, ['login', 'register', 'attachment'], true)) {
+    if (!in_array($page, array_merge(['login', 'register', 'attachment'], $aboutPages), true)) {
         $user = require_user();
 
         if ($page === 'admin' && $user['role'] !== 'admin') {
@@ -768,6 +770,7 @@ $pageTitles = [
     'admin' => 'Panel Admin',
 
     // HALAMAN TENTANG KAMI
+    'tentangkami' => 'Tentang Kami',
     'about' => 'Tentang Kami',
     'about-profile' => 'Profil Lembaga',
     'about-vision-mission' => 'Visi dan Misi',
