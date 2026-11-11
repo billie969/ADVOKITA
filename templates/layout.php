@@ -13,8 +13,12 @@
     <meta name="description" content="Portal pengaduan dan bantuan hukum mahasiswa ADVOKITA">
     <title><?= escape($title) ?> — ADVOKITA</title>
     <link rel="icon" href="/favicon.svg">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="/assets/css/core.css" rel="stylesheet">
+    <link href="/assets/css/layout.css" rel="stylesheet">
     <link href="/assets/css/styles.css" rel="stylesheet">
   </head>
   <body class="<?= in_array($page, ['login', 'register'], true) ? 'auth-page' : 'd-flex flex-column h-100 bg-light' ?>" data-page="<?= escape($page) ?>">

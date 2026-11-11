@@ -8,254 +8,6 @@ $approvedReports = count(array_filter($reports, static fn(array $r): bool => ($r
 $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r['status'] ?? '') === 'rejected'));
 ?>
 
-<main class="container page-content advokita-page dashboard-page">
-
-  <!-- HERO -->
-  <section class="dashboard-hero">
-    <div class="dashboard-hero-content">
-      <span class="dashboard-eyebrow">
-        <span></span> PUSAT LAYANAN &amp; INFORMASI ADVOKITA
-      </span>
-
-      <h1>Beranda <span>ADVOKITA.</span></h1>
-
-      <p>
-        Selamat datang di portal bantuan hukum dan pengaduan mahasiswa.
-        Pantau status perkembangan tindak lanjut pengaduan Anda, simak pengumuman resmi kampus,
-        dan ajukan laporan baru dengan jaminan perlindungan kerahasiaan penuh.
-      </p>
-
-      <div class="dashboard-hero-actions">
-        <a class="btn-dashboard-primary" href="<?= escape(url('report')) ?>">
-          <i class="bi bi-plus-circle-fill"></i>
-          <span>Buat Laporan Baru</span>
-        </a>
-        <a class="btn-dashboard-secondary" href="<?= escape(url('history')) ?>">
-          <i class="bi bi-clock-history"></i>
-          <span>Lihat Riwayat Kasus</span>
-        </a>
-      </div>
-
-      <div class="dashboard-hero-note">
-        <i class="bi bi-shield-check"></i>
-        <span>Suara Anda adalah langkah awal menuju keadilan.</span>
-      </div>
-    </div>
-
-    <div class="dashboard-hero-decoration" aria-hidden="true">
-      <div class="dashboard-hero-circle"></div>
-      <i class="bi bi-speedometer2 dashboard-hero-icon"></i>
-      <span class="dashboard-hero-watermark">A</span>
-    </div>
-  </section>
-
-  <!-- INTRO NOTICE BAR -->
-  <div class="dashboard-intro-bar">
-    <div class="dashboard-intro-icon">
-      <i class="bi bi-info-circle"></i>
-    </div>
-    <div class="dashboard-intro-body">
-      <strong>Layanan Bantuan Hukum &amp; Perlindungan Mahasiswa</strong>
-      <p>
-        Setiap laporan ditinjau secara objektif oleh tim advokasi kampus.
-        Anda dapat memilih opsi pelaporan <span>anonim</span> pada formulir pengaduan untuk menjamin kerahasiaan identitas Anda.
-      </p>
-    </div>
-  </div>
-
-  <!-- STATS OVERVIEW -->
-  <section class="dashboard-stats-grid" aria-label="Statistik Pengaduan">
-    <div class="dash-stat-card">
-      <div class="dash-stat-icon icon-navy">
-        <i class="bi bi-folder2-open"></i>
-      </div>
-      <div class="dash-stat-data">
-        <span class="dash-stat-number"><?= $totalReports ?></span>
-        <span class="dash-stat-label">Total Laporan Anda</span>
-      </div>
-    </div>
-
-    <div class="dash-stat-card">
-      <div class="dash-stat-icon icon-warning">
-        <i class="bi bi-hourglass-split"></i>
-      </div>
-      <div class="dash-stat-data">
-        <span class="dash-stat-number"><?= $pendingReports ?></span>
-        <span class="dash-stat-label">Menunggu Ditinjau</span>
-      </div>
-    </div>
-
-    <div class="dash-stat-card">
-      <div class="dash-stat-icon icon-success">
-        <i class="bi bi-check-circle-fill"></i>
-      </div>
-      <div class="dash-stat-data">
-        <span class="dash-stat-number"><?= $approvedReports ?></span>
-        <span class="dash-stat-label">Laporan Disetujui</span>
-      </div>
-    </div>
-
-    <div class="dash-stat-card">
-      <div class="dash-stat-icon icon-announcement">
-        <i class="bi bi-megaphone-fill"></i>
-      </div>
-      <div class="dash-stat-data">
-        <span class="dash-stat-number"><?= count($announcements) ?></span>
-        <span class="dash-stat-label">Pengumuman Aktif</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 01: PENGUMUMAN -->
-  <section class="dashboard-section-card" aria-labelledby="headingAnnouncements">
-    <div class="dashboard-section-heading">
-      <div class="dashboard-section-icon">
-        <i class="bi bi-megaphone"></i>
-      </div>
-      <div>
-        <span class="dashboard-section-label">BAGIAN 01</span>
-        <h2 id="headingAnnouncements">Pengumuman Kampus</h2>
-        <p>Informasi dan edaran resmi terkini dari tim advokasi serta bantuan hukum.</p>
-      </div>
-      <span class="dashboard-section-number">01</span>
-    </div>
-
-    <div class="announcement-stream">
-      <?php if ($announcements === []): ?>
-        <div class="dash-empty-box">
-          <i class="bi bi-megaphone text-muted" style="font-size: 2.2rem;"></i>
-          <p class="dash-empty-title">Belum Ada Pengumuman</p>
-          <p class="dash-empty-sub">Pengumuman resmi dari pihak pengelola kampus akan dipublikasikan di sini.</p>
-        </div>
-      <?php else: ?>
-        <div class="row g-3">
-          <?php foreach ($announcements as $announcement): ?>
-            <div class="col-12 col-lg-6">
-              <article class="announcement-item">
-                <div class="announcement-header">
-                  <span class="announcement-tag">
-                    <i class="bi bi-info-circle-fill me-1"></i> Informasi Resmi
-                  </span>
-                  <time class="announcement-time" datetime="<?= escape($announcement['published_at']) ?>">
-                    <i class="bi bi-calendar3 me-1"></i> <?= escape(format_date($announcement['published_at'])) ?>
-                  </time>
-                </div>
-                <h3 class="announcement-title"><?= escape($announcement['title']) ?></h3>
-                <p class="announcement-snippet"><?= escape($announcement['body']) ?></p>
-              </article>
-            </div>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
-    </div>
-  </section>
-
-  <!-- SECTION 02: LAPORAN TERBARU -->
-  <section class="dashboard-section-card" aria-labelledby="headingReports">
-    <div class="dashboard-section-heading">
-      <div class="dashboard-section-icon">
-        <i class="bi bi-journal-text"></i>
-      </div>
-      <div>
-        <span class="dashboard-section-label">BAGIAN 02</span>
-        <h2 id="headingReports">Laporan Terbaru Anda</h2>
-        <p>Pantau status perkembangan dan pertimbangan hukum pengaduan yang telah Anda kirimkan.</p>
-      </div>
-      <span class="dashboard-section-number">02</span>
-    </div>
-
-    <?php if ($reports !== []): ?>
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-muted small fw-semibold">Menampilkan <?= min(3, count($reports)) ?> laporan terbaru</span>
-        <a href="<?= escape(url('history')) ?>" class="dash-view-all-link">
-          Lihat semua riwayat <i class="bi bi-arrow-right"></i>
-        </a>
-      </div>
-
-      <div class="report-cards-stack">
-        <?php foreach (array_slice($reports, 0, 3) as $reportItem): ?>
-          <article class="dash-report-card">
-            <div class="dash-report-top">
-              <div class="dash-report-meta">
-                <span class="dash-report-case">
-                  <i class="bi bi-hash"></i><?= escape($reportItem['case_number']) ?>
-                </span>
-                <span class="dash-report-date">
-                  <i class="bi bi-clock me-1"></i><?= escape(format_date($reportItem['created_at'])) ?>
-                </span>
-                <span class="dash-report-cat">
-                  <i class="bi bi-tag me-1"></i><?= escape($reportItem['category']) ?>
-                </span>
-              </div>
-              
-              <?php
-                $status = (string) ($reportItem['status'] ?? 'pending');
-                $badgeClass = match ($status) {
-                    'approved' => 'badge-status-approved',
-                    'rejected' => 'badge-status-rejected',
-                    default => 'badge-status-pending',
-                };
-              ?>
-              <span class="badge-status-pill <?= $badgeClass ?>">
-                <span class="badge-dot"></span>
-                <?= escape(status_label($status)) ?>
-              </span>
-            </div>
-
-            <h3 class="dash-report-title">
-              <a href="<?= escape(url('detail', ['case' => $reportItem['case_number']])) ?>">
-                <?= escape($reportItem['title']) ?>
-              </a>
-            </h3>
-
-            <?php if (!empty($reportItem['decision_note'])): ?>
-              <div class="dash-decision-box">
-                <div class="dash-decision-label">
-                  <i class="bi bi-chat-left-quote-fill me-1"></i> Catatan Pertimbangan Admin:
-                </div>
-                <p class="dash-decision-text"><?= escape($reportItem['decision_note']) ?></p>
-              </div>
-            <?php endif; ?>
-
-            <div class="dash-report-footer">
-              <span class="dash-report-sub-info">
-                <?php if (!empty($reportItem['is_anonymous'])): ?>
-                  <span class="text-muted small"><i class="bi bi-incognito me-1 text-danger"></i> Pengaduan Anonim</span>
-                <?php else: ?>
-                  <span class="text-muted small"><i class="bi bi-person-check me-1 text-success"></i> Identitas Terbuka</span>
-                <?php endif; ?>
-              </span>
-              <a class="dash-btn-detail" href="<?= escape(url('detail', ['case' => $reportItem['case_number']])) ?>">
-                <span>Lihat Detail</span>
-                <i class="bi bi-arrow-right"></i>
-              </a>
-            </div>
-          </article>
-        <?php endforeach; ?>
-      </div>
-
-    <?php else: ?>
-
-      <div class="dash-empty-state-box">
-        <div class="dash-empty-icon-wrap">
-          <i class="bi bi-inbox"></i>
-        </div>
-        <h3 class="dash-empty-heading">Belum Ada Laporan yang Dibuat</h3>
-        <p class="dash-empty-description">
-          Anda belum memiliki riwayat pengaduan. Jika Anda mengalami permasalahan hukum
-          atau membutuhkan bantuan advokasi, ajukan laporan melalui formulir pengaduan resmi kami.
-        </p>
-        <a class="btn-dashboard-primary d-inline-flex" href="<?= escape(url('report')) ?>">
-          <i class="bi bi-plus-circle-fill"></i>
-          <span>Buat Laporan Sekarang</span>
-        </a>
-      </div>
-
-    <?php endif; ?>
-  </section>
-
-</main>
-
 <style>
 /* ===================================
    ADVOKITA DASHBOARD PAGE
@@ -950,3 +702,251 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
   }
 }
 </style>
+
+<main class="container page-content advokita-page dashboard-page">
+
+  <!-- HERO -->
+  <section class="dashboard-hero">
+    <div class="dashboard-hero-content">
+      <span class="dashboard-eyebrow">
+        <span></span> PUSAT LAYANAN &amp; INFORMASI ADVOKITA
+      </span>
+
+      <h1>Beranda <span>ADVOKITA.</span></h1>
+
+      <p>
+        Selamat datang di portal bantuan hukum dan pengaduan mahasiswa.
+        Pantau status perkembangan tindak lanjut pengaduan Anda, simak pengumuman resmi kampus,
+        dan ajukan laporan baru dengan jaminan perlindungan kerahasiaan penuh.
+      </p>
+
+      <div class="dashboard-hero-actions">
+        <a class="btn-dashboard-primary" href="<?= escape(url('report')) ?>">
+          <i class="bi bi-plus-circle-fill"></i>
+          <span>Buat Laporan Baru</span>
+        </a>
+        <a class="btn-dashboard-secondary" href="<?= escape(url('history')) ?>">
+          <i class="bi bi-clock-history"></i>
+          <span>Lihat Riwayat Kasus</span>
+        </a>
+      </div>
+
+      <div class="dashboard-hero-note">
+        <i class="bi bi-shield-check"></i>
+        <span>Suara Anda adalah langkah awal menuju keadilan.</span>
+      </div>
+    </div>
+
+    <div class="dashboard-hero-decoration" aria-hidden="true">
+      <div class="dashboard-hero-circle"></div>
+      <i class="bi bi-speedometer2 dashboard-hero-icon"></i>
+      <span class="dashboard-hero-watermark">A</span>
+    </div>
+  </section>
+
+  <!-- INTRO NOTICE BAR -->
+  <div class="dashboard-intro-bar">
+    <div class="dashboard-intro-icon">
+      <i class="bi bi-info-circle"></i>
+    </div>
+    <div class="dashboard-intro-body">
+      <strong>Layanan Bantuan Hukum &amp; Perlindungan Mahasiswa</strong>
+      <p>
+        Setiap laporan ditinjau secara objektif oleh tim advokasi kampus.
+        Anda dapat memilih opsi pelaporan <span>anonim</span> pada formulir pengaduan untuk menjamin kerahasiaan identitas Anda.
+      </p>
+    </div>
+  </div>
+
+  <!-- STATS OVERVIEW -->
+  <section class="dashboard-stats-grid" aria-label="Statistik Pengaduan">
+    <div class="dash-stat-card">
+      <div class="dash-stat-icon icon-navy">
+        <i class="bi bi-folder2-open"></i>
+      </div>
+      <div class="dash-stat-data">
+        <span class="dash-stat-number"><?= $totalReports ?></span>
+        <span class="dash-stat-label">Total Laporan Anda</span>
+      </div>
+    </div>
+
+    <div class="dash-stat-card">
+      <div class="dash-stat-icon icon-warning">
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+      <div class="dash-stat-data">
+        <span class="dash-stat-number"><?= $pendingReports ?></span>
+        <span class="dash-stat-label">Menunggu Ditinjau</span>
+      </div>
+    </div>
+
+    <div class="dash-stat-card">
+      <div class="dash-stat-icon icon-success">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <div class="dash-stat-data">
+        <span class="dash-stat-number"><?= $approvedReports ?></span>
+        <span class="dash-stat-label">Laporan Disetujui</span>
+      </div>
+    </div>
+
+    <div class="dash-stat-card">
+      <div class="dash-stat-icon icon-announcement">
+        <i class="bi bi-megaphone-fill"></i>
+      </div>
+      <div class="dash-stat-data">
+        <span class="dash-stat-number"><?= count($announcements) ?></span>
+        <span class="dash-stat-label">Pengumuman Aktif</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01: PENGUMUMAN -->
+  <section class="dashboard-section-card" aria-labelledby="headingAnnouncements">
+    <div class="dashboard-section-heading">
+      <div class="dashboard-section-icon">
+        <i class="bi bi-megaphone"></i>
+      </div>
+      <div>
+        <span class="dashboard-section-label">BAGIAN 01</span>
+        <h2 id="headingAnnouncements">Pengumuman Kampus</h2>
+        <p>Informasi dan edaran resmi terkini dari tim advokasi serta bantuan hukum.</p>
+      </div>
+      <span class="dashboard-section-number">01</span>
+    </div>
+
+    <div class="announcement-stream">
+      <?php if ($announcements === []): ?>
+        <div class="dash-empty-box">
+          <i class="bi bi-megaphone text-muted" style="font-size: 2.2rem;"></i>
+          <p class="dash-empty-title">Belum Ada Pengumuman</p>
+          <p class="dash-empty-sub">Pengumuman resmi dari pihak pengelola kampus akan dipublikasikan di sini.</p>
+        </div>
+      <?php else: ?>
+        <div class="row g-3">
+          <?php foreach ($announcements as $announcement): ?>
+            <div class="col-12 col-lg-6">
+              <article class="announcement-item">
+                <div class="announcement-header">
+                  <span class="announcement-tag">
+                    <i class="bi bi-info-circle-fill me-1"></i> Informasi Resmi
+                  </span>
+                  <time class="announcement-time" datetime="<?= escape($announcement['published_at']) ?>">
+                    <i class="bi bi-calendar3 me-1"></i> <?= escape(format_date($announcement['published_at'])) ?>
+                  </time>
+                </div>
+                <h3 class="announcement-title"><?= escape($announcement['title']) ?></h3>
+                <p class="announcement-snippet"><?= escape($announcement['body']) ?></p>
+              </article>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+    </div>
+  </section>
+
+  <!-- SECTION 02: LAPORAN TERBARU -->
+  <section class="dashboard-section-card" aria-labelledby="headingReports">
+    <div class="dashboard-section-heading">
+      <div class="dashboard-section-icon">
+        <i class="bi bi-journal-text"></i>
+      </div>
+      <div>
+        <span class="dashboard-section-label">BAGIAN 02</span>
+        <h2 id="headingReports">Laporan Terbaru Anda</h2>
+        <p>Pantau status perkembangan dan pertimbangan hukum pengaduan yang telah Anda kirimkan.</p>
+      </div>
+      <span class="dashboard-section-number">02</span>
+    </div>
+
+    <?php if ($reports !== []): ?>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted small fw-semibold">Menampilkan <?= min(3, count($reports)) ?> laporan terbaru</span>
+        <a href="<?= escape(url('history')) ?>" class="dash-view-all-link">
+          Lihat semua riwayat <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="report-cards-stack">
+        <?php foreach (array_slice($reports, 0, 3) as $reportItem): ?>
+          <article class="dash-report-card">
+            <div class="dash-report-top">
+              <div class="dash-report-meta">
+                <span class="dash-report-case">
+                  <i class="bi bi-hash"></i><?= escape($reportItem['case_number']) ?>
+                </span>
+                <span class="dash-report-date">
+                  <i class="bi bi-clock me-1"></i><?= escape(format_date($reportItem['created_at'])) ?>
+                </span>
+                <span class="dash-report-cat">
+                  <i class="bi bi-tag me-1"></i><?= escape($reportItem['category']) ?>
+                </span>
+              </div>
+              
+              <?php
+                $status = (string) ($reportItem['status'] ?? 'pending');
+                $badgeClass = match ($status) {
+                    'approved' => 'badge-status-approved',
+                    'rejected' => 'badge-status-rejected',
+                    default => 'badge-status-pending',
+                };
+              ?>
+              <span class="badge-status-pill <?= $badgeClass ?>">
+                <span class="badge-dot"></span>
+                <?= escape(status_label($status)) ?>
+              </span>
+            </div>
+
+            <h3 class="dash-report-title">
+              <a href="<?= escape(url('detail', ['case' => $reportItem['case_number']])) ?>">
+                <?= escape($reportItem['title']) ?>
+              </a>
+            </h3>
+
+            <?php if (!empty($reportItem['decision_note'])): ?>
+              <div class="dash-decision-box">
+                <div class="dash-decision-label">
+                  <i class="bi bi-chat-left-quote-fill me-1"></i> Catatan Pertimbangan Admin:
+                </div>
+                <p class="dash-decision-text"><?= escape($reportItem['decision_note']) ?></p>
+              </div>
+            <?php endif; ?>
+
+            <div class="dash-report-footer">
+              <span class="dash-report-sub-info">
+                <?php if (!empty($reportItem['is_anonymous'])): ?>
+                  <span class="text-muted small"><i class="bi bi-incognito me-1 text-danger"></i> Pengaduan Anonim</span>
+                <?php else: ?>
+                  <span class="text-muted small"><i class="bi bi-person-check me-1 text-success"></i> Identitas Terbuka</span>
+                <?php endif; ?>
+              </span>
+              <a class="dash-btn-detail" href="<?= escape(url('detail', ['case' => $reportItem['case_number']])) ?>">
+                <span>Lihat Detail</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </article>
+        <?php endforeach; ?>
+      </div>
+
+    <?php else: ?>
+
+      <div class="dash-empty-state-box">
+        <div class="dash-empty-icon-wrap">
+          <i class="bi bi-inbox"></i>
+        </div>
+        <h3 class="dash-empty-heading">Belum Ada Laporan yang Dibuat</h3>
+        <p class="dash-empty-description">
+          Anda belum memiliki riwayat pengaduan. Jika Anda mengalami permasalahan hukum
+          atau membutuhkan bantuan advokasi, ajukan laporan melalui formulir pengaduan resmi kami.
+        </p>
+        <a class="btn-dashboard-primary d-inline-flex" href="<?= escape(url('report')) ?>">
+          <i class="bi bi-plus-circle-fill"></i>
+          <span>Buat Laporan Sekarang</span>
+        </a>
+      </div>
+
+    <?php endif; ?>
+  </section>
+
+</main>
