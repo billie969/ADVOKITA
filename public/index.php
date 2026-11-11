@@ -136,7 +136,7 @@ function send_attachment(PDO $db, array $user): never
     exit;
 }
 
-$pageNames = ['auth', 'login', 'register', 'dashboard', 'report', 'history', 'detail', 'admin', 'attachment'];
+$pageNames = ['auth', 'login', 'register', 'dashboard', 'report', 'history', 'detail', 'admin', 'attachment', 'tentangkami'];
 $page = $_GET['page'] ?? (current_user() === null ? 'login' : (current_user()['role'] === 'admin' ? 'admin' : 'dashboard'));
 if (!is_string($page) || !in_array($page, $pageNames, true)) {
     http_response_code(404);
@@ -381,7 +381,7 @@ try {
     if (in_array($page, ['login', 'register'], true) && $user !== null) {
         redirect($user['role'] === 'admin' ? 'admin' : 'dashboard');
     }
-    if (!in_array($page, ['login', 'register', 'attachment'], true)) {
+    if (!in_array($page, ['login', 'register', 'attachment', 'tentangkami'], true)) {
         $user = require_user();
         if ($page === 'admin' && $user['role'] !== 'admin') {
             redirect('dashboard');
@@ -493,6 +493,7 @@ $pageTitles = [
     'history' => 'Riwayat',
     'detail' => 'Detail Pengaduan',
     'admin' => 'Panel Admin',
+    'tentangkami' => 'Tentang Kami',
 ];
 $title = $pageTitles[$page] ?? 'ADVOKITA';
 require APP_ROOT . '/templates/layout.php';

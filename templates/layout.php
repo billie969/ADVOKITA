@@ -17,24 +17,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="/assets/css/styles.css" rel="stylesheet">
   </head>
-  <body class="<?= in_array($page, ['login', 'register'], true) ? 'auth-page bg-light' : 'd-flex flex-column h-100 bg-light' ?>" data-page="<?= escape($page) ?>">
-    
+  <body class="<?= in_array($page, ['login', 'register'], true) ? 'auth-page' : 'd-flex flex-column h-100 bg-light' ?>" data-page="<?= escape($page) ?>">
     <?php if (!in_array($page, ['login', 'register'], true)): ?>
-      <!-- Header dengan Shadow Halus & Tinggi yang Proporsional -->
       <header class="site-header bg-white border-bottom shadow-sm sticky-top">
         <div class="container d-flex align-items-center justify-content-between py-2 py-md-0" style="min-height: 70px;">
-          
-          <a class="site-brand text-decoration-none d-flex align-items-center gap-2" href="<?= escape(url($user['role'] === 'admin' ? 'admin' : 'dashboard')) ?>">
+          <a class="site-brand text-decoration-none d-flex align-items-center gap-2" href="<?= escape(url($user !== null && $user['role'] === 'admin' ? 'admin' : ($user !== null ? 'dashboard' : 'tentangkami'))) ?>">
             <span class="brand-icon bg-danger bg-opacity-10 text-danger p-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
               <i class="bi bi-bank fs-5" aria-hidden="true"></i>
             </span>
             <span class="d-flex flex-column lh-sm">
               <strong class="text-dark tracking-tight">ADVOKITA</strong>
-              <small class="text-muted" style="font-size: 0.75rem;"><?= $user['role'] === 'admin' ? 'Panel Administrasi' : 'Legal Aid System' ?></small>
+              <small class="text-muted" style="font-size: 0.75rem;"><?= ($user !== null && $user['role'] === 'admin') ? 'Panel Administrasi' : 'Legal Aid System' ?></small>
             </span>
           </a>
 
-          <?php if ($user['role'] === 'user'): ?>
+          <?php if ($user !== null && $user['role'] === 'user'): ?>
             <nav class="main-nav d-none d-lg-flex align-items-center gap-1 ms-lg-4" aria-label="Navigasi utama">
               <a class="px-3 py-2 rounded-2 text-decoration-none fw-medium <?= $page === 'dashboard' ? 'active bg-danger text-white' : 'text-secondary hover-bg-light' ?>" href="<?= escape(url('dashboard')) ?>">
                 <i class="bi bi-house me-1" aria-hidden="true"></i><span>Beranda</span>
@@ -45,10 +42,14 @@
               <a class="px-3 py-2 rounded-2 text-decoration-none fw-medium <?= in_array($page, ['history', 'detail'], true) ? 'active bg-danger text-white' : 'text-secondary hover-bg-light' ?>" href="<?= escape(url('history')) ?>">
                 <i class="bi bi-clock-history me-1" aria-hidden="true"></i><span>Riwayat</span>
               </a>
+              <a class="px-3 py-2 rounded-2 text-decoration-none fw-medium <?= $page === 'tentangkami' ? 'active bg-danger text-white' : 'text-secondary hover-bg-light' ?>" href="<?= escape(url('tentangkami')) ?>">
+                <i class="bi bi-info-circle me-1" aria-hidden="true"></i><span>Tentang Kami</span>
+              </a>
             </nav>
           <?php endif; ?>
 
           <div class="d-flex align-items-center gap-3 ms-auto">
+            <?php if ($user !== null): ?>
             <div class="user-info d-none d-md-flex align-items-center gap-2 border-start ps-3">
               <span class="avatar bg-danger text-white rounded-circle fw-bold d-flex align-items-center justify-content-center shadow-sm" style="width: 36px; height: 36px; font-size: 0.9rem;">
                 <?= escape(strtoupper(substr($user['fullName'], 0, 1))) ?>
@@ -66,12 +67,16 @@
                 <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Keluar
               </button>
             </form>
+            <?php else: ?>
+            <a href="<?= escape(url('login')) ?>" class="btn btn-danger btn-sm rounded-pill px-3 fw-medium d-flex align-items-center">
+              <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i> Masuk
+            </a>
+            <?php endif; ?>
           </div>
         </div>
       </header>
     <?php endif; ?>
 
-    <!-- Area Notifikasi / Flash Message -->
     <?php if ($error !== null || $success !== null): ?>
       <div class="container notification-container <?= in_array($page, ['login', 'register'], true) ? 'auth-messages' : 'page-content pb-0 pt-3' ?>">
         <?php if ($error !== null): ?>
@@ -87,13 +92,11 @@
       </div>
     <?php endif; ?>
 
-    <!-- Konten Utama Halaman -->
     <div class="flex-shrink-0">
       <?php require APP_ROOT . '/templates/pages/' . $page . '.php'; ?>
     </div>
 
     <?php if (!in_array($page, ['login', 'register'], true)): ?>
-      <!-- Footer Rapi di Bawah -->
       <footer class="site-footer bg-white border-top py-3 mt-auto text-muted small">
         <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
           <span class="fw-semibold text-dark">ADVOKITA</span>
@@ -101,11 +104,10 @@
         </div>
       </footer>
 
-      <!-- Navigasi Seluler / Bottom Bar yang Modern -->
-      <?php if ($user['role'] === 'user'): ?>
+      <?php if ($user !== null && $user['role'] === 'user'): ?>
         <nav class="main-nav mobile-nav d-lg-none fixed-bottom bg-white border-top shadow-lg py-2 px-3 d-flex justify-content-around align-items-center" aria-label="Navigasi seluler">
           <a class="d-flex flex-column align-items-center text-decoration-none <?= $page === 'dashboard' ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('dashboard')) ?>">
-            <i class="bi bi-house fs-5" aria-hidden="time"></i><span style="font-size: 0.7rem;">Beranda</span>
+            <i class="bi bi-house fs-5" aria-hidden="true"></i><span style="font-size: 0.7rem;">Beranda</span>
           </a>
           <a class="d-flex flex-column align-items-center text-decoration-none <?= $page === 'report' ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('report')) ?>">
             <i class="bi bi-plus-circle fs-5" aria-hidden="true"></i><span style="font-size: 0.7rem;">Pengaduan</span>
@@ -113,9 +115,11 @@
           <a class="d-flex flex-column align-items-center text-decoration-none <?= in_array($page, ['history', 'detail'], true) ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('history')) ?>">
             <i class="bi bi-clock-history fs-5" aria-hidden="true"></i><span style="font-size: 0.7rem;">Riwayat</span>
           </a>
+          <a class="d-flex flex-column align-items-center text-decoration-none <?= $page === 'tentangkami' ? 'text-danger fw-bold' : 'text-muted' ?>" href="<?= escape(url('tentangkami')) ?>">
+            <i class="bi bi-info-circle fs-5" aria-hidden="true"></i><span style="font-size: 0.7rem;">Tentang</span>
+          </a>
         </nav>
       <?php endif; ?>
     <?php endif; ?>
-    
   </body>
 </html>
