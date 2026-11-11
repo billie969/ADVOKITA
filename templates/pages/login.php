@@ -1,8 +1,7 @@
-
 <?php
 /** @var array<string, string> $formValues */
 ?>
-
+<style>
 .login-page {
   --adv-navy: #24344d;
   --adv-navy-dark: #18263b;
@@ -154,6 +153,7 @@
 }
 
 .login-brand-caption {
+  margin: 0;
   color: rgba(255,255,255,.65);
   font-size: .76rem;
   letter-spacing: 1.3px;
@@ -260,10 +260,6 @@
   border-color: var(--adv-navy);
   background: #fff;
   box-shadow: 0 0 0 4px rgba(36,52,77,.09);
-}
-
-.login-input:focus + .login-input-focus {
-  opacity: 1;
 }
 
 /* Password toggle */
@@ -461,24 +457,9 @@
           Transparansi · Perlindungan · Keadilan
         </p>
 
-<main class="container min-vh-100 d-flex align-items-center justify-content-center py-4">
-  <section class="auth-card card border-0 overflow-hidden">
-    <div class="brand-panel text-center text-white">
+      </div><!-- /.login-brand-content -->
 
-      <h1 class="brand-title mb-1">ADVOKITA</h1>
-      <p class="brand-subtitle mb-0">Whistleblowing &amp; Legal Aid System</p>
-    </div>
-    <form class="auth-form" method="post" action="<?= escape(url('login')) ?>" autocomplete="on">
-      <?php csrf_input(); ?>
-      <input type="hidden" name="action" value="login">
-      <div class="mb-4"><h2>Masuk ke ADVOKITA</h2><p class="text-secondary mb-0">Gunakan akun mahasiswa atau admin Anda.</p></div>
-
-      <div class="mb-3">
-        <label class="form-label" for="loginNim">NPM <span class="text-danger">*</span></label>
-        <input class="form-control" id="loginNim" name="nim" required inputmode="numeric" pattern="[0-9]{4,20}" autocomplete="username" placeholder="Masukkan NPM Anda" value="<?= escape($formValues['nim'] ?? '') ?>">
-      </div>
-
-    </div>
+    </div><!-- /.login-brand -->
 
     <!-- LOGIN FORM -->
     <div class="login-form-panel">
@@ -588,7 +569,7 @@
 
       </form>
 
-    </div>
+    </div><!-- /.login-form-panel -->
 
   </section>
 
