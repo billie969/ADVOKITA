@@ -348,7 +348,7 @@ try {
     if (in_array($page, ['login', 'register'], true) && $user !== null) {
         redirect($user['role'] === 'admin' ? 'admin' : 'dashboard');
     }
-    if (!in_array($page, ['login', 'register', 'attachment'], true)) {
+    if (!in_array($page, ['login', 'register', 'attachment', 'tentangkami'], true)) {
         $user = require_user();
         if ($page === 'admin' && $user['role'] !== 'admin') {
             redirect('dashboard');
