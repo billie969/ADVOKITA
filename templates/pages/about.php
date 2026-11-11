@@ -1,6 +1,6 @@
 <?php
 /**
- * Forwarding view untuk rute /about ke halaman utama Tentang Kami
+ * Forwarding view ke halaman Profil Lembaga
  */
-require __DIR__ . '/tentangkami.php';
-
+require __DIR__ . '/about-profile.php';
+?>
