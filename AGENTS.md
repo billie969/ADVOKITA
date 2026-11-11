@@ -34,4 +34,16 @@ Gunakan form HTML POST, validasi dan rendering server-side, sesi PHP, serta komp
 - `php bin/setup-database.php` menerapkan skema; perintah ini memerlukan koneksi database terkonfigurasi.
 - Pastikan berkas sumber maupun keluaran publik tidak memuat JavaScript atau elemen `<script>`.
 
+## Alur Update ke Repo LabKom
+
+Ketika user memberikan instruksi dengan kata kunci **"update ke repo labkom"**:
+1. Masuk ke `C:\Users\user\TUBES_PRK_PEMWEB_2026`.
+2. Sinkronkan `main` dari `upstream` (`git fetch upstream main; git checkout main; git merge upstream/main; git push origin main`).
+3. Buat branch baru berbasis timestamp/topik (contoh: `feat/kelompok-24-update-<tanggal>`).
+4. Salin seluruh perubahan dari `C:\Users\user\ADVOKITA` ke `kelompok/kelompok_24/` dengan mengecualikan `.git` dan `.env` (robocopy atau skrip PowerShell).
+5. Jalankan verifikasi lokal: `php -l` seluruh file PHP di `kelompok/kelompok_24/`, pastikan tidak ada file > 5 MB, dan tidak ada file di luar `kelompok/kelompok_24/` yang tersentuh.
+6. Commit dan push branch ke `origin` (fork `billie969`).
+7. Buat Pull Request otomatis via GitHub REST API ke `Praktikum-LabKom-TI-Unila/TUBES_PRK_PEMWEB_2026:main`.
+8. Pantau validasi bot CI/CD hingga PR ter-merge secara otomatis.
+
 Lihat `README.md` untuk cara instalasi dan penggunaan lokal.
