@@ -89,6 +89,67 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
 
 ---
 
+## 📁 Struktur Proyek
+
+```text
+ADVOKITA/
+├── app/
+│   └── bootstrap.php              # Sesi, PDO, CSRF, validasi, dan akses data
+├── bin/
+│   ├── setup-database.php         # Menerapkan skema PostgreSQL
+│   └── create-admin.php           # Membuat akun admin
+├── database/
+│   └── schema.sql                 # Tabel, batasan, indeks, dan pembatasan login
+├── design/
+│   └── design-system.md           # Panduan visual
+├── public/
+│   ├── index.php                  # Front controller halaman dan form
+│   ├── favicon.svg
+│   └── assets/
+│       ├── css/
+│       │   ├── styles.css         # Gaya utama
+│       │   ├── core.css           # Komponen dan tema
+│       │   └── layout.css         # Layout responsif
+│       └── ...                    # Ikon dan gambar
+├── scripts/
+│   └── setup-local-db.ps1         # Menyiapkan role/database di PostgreSQL lokal
+├── storage/
+│   └── uploads/                   # Bukti privat, di luar document root
+├── templates/
+│   ├── layout.php                 # Kerangka HTML bersama
+│   └── pages/
+│       ├── login.php              # Halaman masuk
+│       ├── register.php           # Halaman pendaftaran
+│       ├── dashboard.php          # Beranda mahasiswa
+│       ├── report.php             # Formulir pengaduan
+│       ├── history.php            # Riwayat pengaduan
+│       ├── detail.php             # Detail laporan
+│       └── admin.php              # Panel administrasi
+├── tests/
+│   └── validation.php             # Pengujian aturan validasi PHP
+├── .env.example                   # Contoh variabel lingkungan
+├── Dockerfile                     # Konfigurasi kontainer PHP 8.2 Alpine
+├── composer.json                  # Dependensi PHP
+├── AGENTS.md                      # Konvensi dan batasan kontribusi
+└── README.md                      # Dokumentasi proyek (file ini)
+```
+
+Server web harus memakai `public/` sebagai document root. Kredensial database disimpan di `.env` lokal, bukan di repositori. Direktori `storage/uploads/` berada di luar area yang dapat disajikan langsung oleh web server.
+
+---
+
+## ⚙️ Fitur dan Alur Aplikasi
+
+- **Akun mahasiswa/admin:** registrasi, login, logout, sesi, dan pengalihan berdasarkan peran.
+- **Halaman autentikasi terpisah:** login di `index.php?page=login` dan pendaftaran di `index.php?page=register`.
+- **Pengaduan:** judul, kategori, tanggal kejadian, kronologi, pilihan anonim, dan lampiran opsional.
+- **Lampiran:** hanya PDF/JPG/PNG hingga 10 MB. PHP memeriksa MIME dari isi berkas; unduhan hanya tersedia bagi pemilik laporan atau admin.
+- **Pemantauan laporan:** dashboard, riwayat, detail, status, dan catatan keputusan.
+- **Administrasi:** admin menerima laporan, menyetujui/menolak laporan pending dengan catatan, dan mengelola pengumuman.
+- **Tanpa JavaScript:** setiap aksi dikirim melalui form HTML biasa dan ditangani di server. Navigasi halaman, validasi, dan pembaruan konten tidak membutuhkan skrip browser.
+
+---
+
 ## 🚀 Panduan Menjalankan Aplikasi Secara Lokal
 
 ### 1. Persyaratan Sistem
@@ -96,12 +157,21 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
 - **PostgreSQL 14+**.
 - Web server Apache/Nginx atau server PHP bawaan (*PHP Built-in Server*).
 
+Pada Laragon, pilih versi PHP yang sesuai dan aktifkan `extension=pdo_pgsql` pada `php.ini` yang digunakan. Restart Laragon setelah perubahan ekstensi. Pastikan `php -m` menampilkan `PDO`, `pdo_pgsql`, dan `fileinfo`.
+
+Agar batas lampiran aplikasi 10 MB dapat dipenuhi, konfigurasi PHP/web server harus mengizinkan `upload_max_filesize=10M` dan `post_max_size=12M`. Atur nilai tersebut pada `php.ini` atau konfigurasi PHP yang dipakai oleh web server, lalu restart server.
+
 ### 2. Konfigurasi Database
 1. Salin berkas `.env.example` menjadi `.env`:
    ```bash
    cp .env.example .env
    ```
-2. Sesuaikan kredensial PostgreSQL Anda pada berkas `.env`:
+2. Pada Windows/Laragon, buka PowerShell sebagai Administrator dan jalankan skrip lokal:
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File .\scripts\setup-local-db.ps1
+   ```
+   Skrip membuat role/database hanya bila keduanya belum ada, membuat kata sandi lokal dan rahasia sesi, lalu menyimpannya pada `.env`. Skrip tidak menimpa role/database yang sudah ada.
+3. Sesuaikan kredensial PostgreSQL Anda pada berkas `.env`:
    ```env
    PGHOST=127.0.0.1
    PGPORT=5432
@@ -110,11 +180,11 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
    PGPASSWORD=password_lokal_anda
    SESSION_SECRET=kunci_acak_minimal_32_karakter_untuk_keamanan_sesi
    ```
-3. Eksekusi skema tabel database:
+4. Eksekusi skema tabel database:
    ```bash
    php bin/setup-database.php
    ```
-4. Buat akun Admin pertama:
+5. Buat akun Admin pertama:
    ```bash
    php bin/create-admin.php
    ```
@@ -126,8 +196,25 @@ php -S 127.0.0.1:8000 -t public
 ```
 Buka browser dan akses: `http://127.0.0.1:8000`
 
+Untuk penggunaan selain pengembangan, gunakan HTTPS dan web server PHP yang dikonfigurasi agar hanya `public/` dapat diakses.
+
 ### 4. Menjalankan Pengujian Validasi
 Pastikan aturan validasi sistem lulus tanpa kendala:
 ```bash
 php tests/validation.php
+php -l public/index.php
 ```
+
+Uji alur secara manual tanpa JavaScript: registrasi/login, pengajuan laporan dengan dan tanpa bukti, akses pemilik terhadap detail/lampiran, moderasi admin, serta pembuatan/publikasi/penghapusan pengumuman.
+
+---
+
+## 🔒 Aturan Keamanan dan Pengembangan
+
+- Semua perubahan data harus memakai POST dan token CSRF; gunakan redirect setelah aksi berhasil.
+- Validasi semua data di PHP. Gunakan prepared statements PDO dan escape nilai keluaran HTML.
+- Jangan menyimpan kata sandi mentah; gunakan `password_hash` dan `password_verify`.
+- Periksa otorisasi dan kepemilikan laporan pada tiap operasi detail/unduh lampiran.
+- Jangan menyajikan isi `storage/` sebagai berkas statis publik.
+- Jangan menaruh rahasia di kode, dokumentasi, atau repositori. File `.env` tidak boleh dibagikan atau di-commit.
+- Jangan menambahkan JavaScript, Node.js, npm/pnpm, Vite, atau dependensi yang memerlukan JavaScript.

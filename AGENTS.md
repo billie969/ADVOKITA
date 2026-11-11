@@ -34,4 +34,4 @@ Gunakan form HTML POST, validasi dan rendering server-side, sesi PHP, serta komp
 - `php bin/setup-database.php` menerapkan skema; perintah ini memerlukan koneksi database terkonfigurasi.
 - Pastikan berkas sumber maupun keluaran publik tidak memuat JavaScript atau elemen `<script>`.
 
-Lihat `read.md` dan `README.md` untuk cara instalasi dan penggunaan lokal.
+Lihat `README.md` untuk cara instalasi dan penggunaan lokal.
