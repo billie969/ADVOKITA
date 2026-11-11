@@ -8,8 +8,7 @@
         <span class="eyebrow">ADVOKITA</span>
         <h1>Tentang Kita</h1>
         <p class="text-secondary mb-0">
-          Mengenal lebih dekat ADVOKITA dan LBH Bandar Lampung
-          dalam memperjuangkan akses keadilan bagi masyarakat.
+          Mengenal lebih dekat ADVOKITA dalam memperjuangkan akses keadilan bagi masyarakat.
         </p>
       </div>
     </div>
@@ -18,11 +17,10 @@
 
     <!-- NAVIGASI TENTANG KITA -->
     <nav class="about-navigation">
-      <a href="#sejarah">Sejarah LBH Bandar Lampung</a>
+      <a href="#sejarah">Sejarah Advokita Bandar Lampung</a>
       <a href="#visi-misi">Visi & Misi ADVOKITA</a>
       <a href="#struktur">Struktur Organisasi & Staf</a>
       <a href="#bantuan-hukum">Bantuan Hukum</a>
-      <a href="#kalabahu">KALABAHU</a>
       <a href="#kontak">Kontak</a>
     </nav>
 
@@ -31,37 +29,37 @@
     <!-- 1. SEJARAH -->
     <section id="sejarah" class="about-section">
       <span class="eyebrow">PROFIL LEMBAGA</span>
-      <h2>Sejarah LBH Bandar Lampung</h2>
+      <h2>Sejarah Advokita Bandar Lampung</h2>
 
       <p>
-        Lembaga Bantuan Hukum (LBH) Bandar Lampung merupakan
-        lembaga yang hadir untuk memperjuangkan hak-hak masyarakat,
-        khususnya kelompok masyarakat miskin, marginal, dan
-        kelompok yang mengalami ketidakadilan dalam memperoleh
-        akses terhadap hukum.
+        ADVOKITA berawal dari keresahan sekelompok mahasiswa semester 5 
+        yang melihat masih terbatasnya wadah bagi masyarakat untuk menyampaikan 
+        pengaduan serta memperoleh informasi dan pendampingan terkait permasalahan hukum. 
+        Kami menyadari bahwa tidak semua orang memiliki pemahaman yang cukup mengenai 
+        hukum maupun mengetahui ke mana harus mencari bantuan ketika menghadapi 
+        persoalan hukum.
       </p>
 
       <p>
-        Kehadiran LBH Bandar Lampung berawal dari pembentukan
-        project base pada tahun 1994 untuk menangani kasus
-        penggusuran tanah di Pulau Panggung dan Menggala.
-        Pada 22 Desember 1994, YLBHI mengirimkan pemberitahuan
-        pembukaan Pos Bantuan Hukum Lampung.
+        Berangkat dari keresahan tersebut, kami berinisiatif membangun ADVOKITA sebagai
+         sebuah platform yang bertujuan menjadi jembatan antara masyarakat dengan akses 
+         informasi dan layanan pengaduan hukum. Kehadiran ADVOKITA diharapkan dapat 
+         mempermudah masyarakat dalam menyampaikan permasalahan, memperoleh informasi 
+         hukum, serta mengetahui langkah-langkah yang dapat ditempuh untuk mendapatkan 
+         bantuan yang sesuai.
       </p>
 
       <p>
-        Seiring perkembangan kebutuhan bantuan hukum dan
-        meningkatnya penanganan kasus, pada 5 Oktober 1995
-        status LBH Bandar Lampung ditingkatkan menjadi
-        kantor cabang Yayasan Lembaga Bantuan Hukum Indonesia
-        (YLBHI).
+        Sebagai bentuk kepedulian terhadap akses keadilan, ADVOKITA dikembangkan 
+        dengan mengedepankan kemudahan akses, keterbukaan informasi, dan pelayanan 
+        yang responsif. Kami percaya bahwa setiap orang berhak mendapatkan kesempatan 
+        yang sama untuk memahami dan memperjuangkan hak-haknya di hadapan hukum.
       </p>
 
       <p>
-        Hingga saat ini, perjuangan bantuan hukum tidak hanya
-        berorientasi pada penyelesaian perkara, tetapi juga
-        mendorong terciptanya perubahan sosial yang lebih adil
-        melalui pendekatan Bantuan Hukum Struktural (BHS).
+        Melalui ADVOKITA, kami berharap dapat berkontribusi dalam menciptakan lingkungan 
+        masyarakat yang lebih sadar hukum, berani menyuarakan ketidakadilan, dan memiliki 
+        akses yang lebih mudah terhadap informasi serta bantuan hukum.
       </p>
     </section>
 
@@ -75,10 +73,10 @@
       <div class="about-info-card">
         <h3><i class="bi bi-eye me-2"></i>Visi</h3>
         <p>
-          Terwujudnya akses keadilan yang setara bagi seluruh
-          masyarakat melalui pelayanan dan pendampingan hukum
-          yang profesional, berintegritas, serta berpihak pada
-          masyarakat yang membutuhkan.
+          Menjadi platform pengaduan dan informasi hukum yang mudah diakses, 
+          terpercaya, dan responsif dalam membantu masyarakat menyampaikan 
+          permasalahan hukum serta memperoleh akses terhadap informasi dan bantuan 
+          hukum secara lebih mudah dan merata.
         </p>
       </div>
 
@@ -86,23 +84,19 @@
         <h3><i class="bi bi-bullseye me-2"></i>Misi</h3>
         <ol>
           <li>
-            Memberikan informasi dan edukasi hukum kepada masyarakat.
+            Menyediakan wadah pengaduan hukum yang memudahkan masyarakat dalam menyampaikan permasalahan hukum yang dialami.
           </li>
           <li>
-            Mempermudah masyarakat dalam memperoleh akses
-            terhadap layanan bantuan hukum.
+            Meningkatkan kesadaran hukum masyarakat melalui penyediaan informasi dan edukasi hukum yang mudah dipahami.
           </li>
           <li>
-            Mendukung pendampingan hukum bagi masyarakat
-            miskin dan kelompok rentan.
+            Mempermudah akses informasi bantuan hukum agar masyarakat mengetahui langkah dan layanan yang dapat ditempuh ketika menghadapi permasalahan hukum.
           </li>
           <li>
-            Mendorong kesadaran masyarakat terhadap hak
-            dan kewajiban hukum.
+            Menjadi penghubung antara masyarakat dan pihak pemberi bantuan hukum sehingga pengaduan dapat memperoleh perhatian dan tindak lanjut yang sesuai.
           </li>
           <li>
-            Mewujudkan pelayanan informasi hukum yang transparan,
-            mudah diakses, dan bertanggung jawab.
+            Mendorong terciptanya keadilan dan kesetaraan di hadapan hukum dengan mendukung keterbukaan informasi serta akses layanan hukum bagi seluruh lapisan masyarakat.
           </li>
         </ol>
       </div>
@@ -205,51 +199,48 @@
       <h2>Bantuan Hukum</h2>
 
       <p>
-        Bantuan hukum merupakan layanan pendampingan dan
-        pembelaan hukum yang diberikan kepada masyarakat
-        untuk memastikan setiap orang memperoleh perlindungan
-        serta kedudukan yang setara di hadapan hukum.
+        ADVOKITA hadir sebagai platform yang membantu masyarakat memperoleh akses 
+        informasi dan layanan pengaduan terkait permasalahan hukum. Kami memahami 
+        bahwa masih banyak masyarakat yang mengalami kesulitan dalam memahami 
+        persoalan hukum maupun menentukan langkah yang tepat ketika menghadapi 
+        permasalahan tersebut.
       </p>
 
       <div class="legal-service-grid">
 
         <div class="legal-service-card">
           <i class="bi bi-bank"></i>
-          <h3>Bantuan Hukum Litigasi</h3>
+          <h3>Pengaduan Permasalahan Hukum</h3>
           <p>
-            Pendampingan dan pembelaan hukum dalam proses
-            penyelesaian perkara melalui jalur pengadilan,
-            sesuai kewenangan dan ketentuan yang berlaku.
+            Menyediakan wadah bagi masyarakat untuk menyampaikan pengaduan
+             terkait permasalahan hukum yang sedang dihadapi.
           </p>
         </div>
 
         <div class="legal-service-card">
           <i class="bi bi-chat-square-text"></i>
-          <h3>Bantuan Hukum Non-Litigasi</h3>
+          <h3>Informasi dan Edukasi Hukum</h3>
           <p>
-            Layanan konsultasi hukum, mediasi, negosiasi,
-            penyuluhan hukum, serta pendampingan di luar
-            proses pengadilan.
+            Menyediakan informasi hukum yang mudah dipahami untuk meningkatkan
+             pengetahuan dan kesadaran hukum masyarakat.
           </p>
         </div>
 
         <div class="legal-service-card">
           <i class="bi bi-megaphone"></i>
-          <h3>Advokasi Masyarakat</h3>
+          <h3>Konsultasi dan Arahan Hukum</h3>
           <p>
-            Upaya memperjuangkan hak masyarakat melalui
-            pendampingan, pengorganisasian, kampanye,
-            dan advokasi kebijakan.
+            Membantu masyarakat memperoleh informasi awal dan arahan mengenai 
+            langkah yang dapat dilakukan ketika menghadapi persoalan hukum.
           </p>
         </div>
 
         <div class="legal-service-card">
           <i class="bi bi-book"></i>
-          <h3>Edukasi Hukum</h3>
+          <h3>Akses Bantuan Hukum</h3>
           <p>
-            Memberikan pemahaman dan meningkatkan
-            kesadaran masyarakat mengenai hukum,
-            hak asasi manusia, dan keadilan.
+            Membantu menghubungkan masyarakat dengan lembaga atau pihak
+             yang berkompeten untuk memperoleh layanan bantuan hukum lebih lanjut.
           </p>
         </div>
 
@@ -258,73 +249,16 @@
 
     <div class="dashboard-divider"></div>
 
-    <!-- 5. KALABAHU -->
-    <section id="kalabahu" class="about-section">
-      <span class="eyebrow">PENDIDIKAN DAN KADERISASI</span>
-      <h2>KALABAHU</h2>
 
-      <h3 class="kalabahu-subtitle">
-        Karya Latihan Bantuan Hukum
-      </h3>
-
-      <p>
-        KALABAHU merupakan program pendidikan dan pelatihan
-        hukum serta hak asasi manusia yang bertujuan membentuk
-        calon pengabdi bantuan hukum yang kritis, berintegritas,
-        dan memiliki kepedulian terhadap persoalan masyarakat.
-      </p>
-
-      <p>
-        Kegiatan ini menjadi salah satu sarana pembelajaran
-        mengenai konsep Bantuan Hukum Struktural (BHS),
-        demokrasi, hak asasi manusia, analisis sosial,
-        serta strategi advokasi hukum.
-      </p>
-
-      <h3>Tujuan KALABAHU</h3>
-
-      <ul class="kalabahu-list">
-        <li>
-          Meningkatkan pengetahuan dan pemahaman peserta
-          mengenai hukum dan hak asasi manusia.
-        </li>
-        <li>
-          Membentuk calon pengabdi bantuan hukum yang
-          kritis dan memiliki integritas.
-        </li>
-        <li>
-          Meningkatkan kemampuan analisis terhadap
-          persoalan hukum dan ketidakadilan sosial.
-        </li>
-        <li>
-          Menumbuhkan kepedulian dan keberpihakan
-          terhadap masyarakat marginal.
-        </li>
-        <li>
-          Mendorong keterlibatan generasi muda dalam
-          memperjuangkan akses keadilan.
-        </li>
-      </ul>
-
-      <p>
-        Melalui KALABAHU, diharapkan lahir generasi yang
-        tidak hanya memahami teori hukum, tetapi juga
-        mampu berkontribusi secara nyata dalam
-        memperjuangkan keadilan di tengah masyarakat.
-      </p>
-    </section>
-
-    <div class="dashboard-divider"></div>
-
-    <!-- 6. KONTAK -->
+    <!-- 5. KONTAK -->
     <section id="kontak" class="about-section">
       <span class="eyebrow">HUBUNGI KAMI</span>
       <h2>Kontak</h2>
 
       <p>
         Untuk mendapatkan informasi lebih lanjut mengenai
-        layanan bantuan hukum, silakan hubungi LBH
-        Bandar Lampung melalui informasi berikut.
+        layanan bantuan hukum, silakan hubungi Advokita
+        melalui informasi berikut.
       </p>
 
       <div class="contact-list">
@@ -345,7 +279,7 @@
           <i class="bi bi-telephone-fill"></i>
           <div>
             <h3>Telepon Kantor</h3>
-            <p>0721-5600425</p>
+            <p>0721-9382911</p>
           </div>
         </div>
 
@@ -353,7 +287,7 @@
           <i class="bi bi-phone-fill"></i>
           <div>
             <h3>Nomor Handphone</h3>
-            <p>0822-7903-1655</p>
+            <p>0822-6993-7917</p>
           </div>
         </div>
 
