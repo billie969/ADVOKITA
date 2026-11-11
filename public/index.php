@@ -8,48 +8,81 @@ function is_checked(mixed $value): bool
     return $value === true || $value === 1 || $value === '1' || $value === 't' || $value === 'on';
 }
 
+
 function save_uploaded_attachment(array $file): array
 {
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+    $errorCode = $file['error'] ?? UPLOAD_ERR_NO_FILE;
+
+    if ($errorCode === UPLOAD_ERR_NO_FILE) {
         return [];
     }
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !is_uploaded_file((string) ($file['tmp_name'] ?? ''))) {
-        if (($file['error'] ?? null) === UPLOAD_ERR_INI_SIZE || ($file['error'] ?? null) === UPLOAD_ERR_FORM_SIZE) {
+
+    if ($errorCode !== UPLOAD_ERR_OK) {
+        if (in_array($errorCode, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)) {
             throw new InputError('Ukuran lampiran maksimal 10 MB.');
         }
-        throw new InputError('Lampiran tidak dapat diproses.');
-    }
-    if ((int) $file['size'] > 10 * 1024 * 1024) {
-        throw new InputError('Ukuran lampiran maksimal 10 MB.');
+
+        throw new InputError('Lampiran gagal diunggah. Silakan coba kembali.');
     }
 
-    $mime = (new finfo(FILEINFO_MIME_TYPE))->file((string) $file['tmp_name']);
-    $extensions = [
+    $temporaryPath = $file['tmp_name'] ?? '';
+
+    if (!is_string($temporaryPath) || !is_uploaded_file($temporaryPath)) {
+        throw new InputError('File lampiran tidak valid.');
+    }
+
+    $fileSize = $file['size'] ?? 0;
+
+    if (
+        !is_numeric($fileSize)
+        || (int) $fileSize <= 0
+        || (int) $fileSize > 10 * 1024 * 1024
+    ) {
+        throw new InputError('Ukuran lampiran harus lebih dari 0 dan maksimal 10 MB.');
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($temporaryPath);
+
+    $allowedTypes = [
         'application/pdf' => '.pdf',
         'image/jpeg' => '.jpg',
         'image/png' => '.png',
     ];
-    if (!is_string($mime) || !isset($extensions[$mime])) {
-        throw new InputError('Isi lampiran bukan PDF, JPG, atau PNG yang valid.');
+
+    if (!is_string($mime) || !isset($allowedTypes[$mime])) {
+        throw new InputError('Format lampiran harus PDF, JPG, atau PNG.');
     }
 
-    $originalName = basename(str_replace('\\', '/', (string) ($file['name'] ?? 'lampiran')));
+    $originalName = basename(
+        str_replace('\\', '/', (string) ($file['name'] ?? 'lampiran'))
+    );
+
     $originalName = trim($originalName);
+
     if ($originalName === '') {
-        $originalName = 'lampiran' . $extensions[$mime];
+        $originalName = 'lampiran' . $allowedTypes[$mime];
     }
+
     $characters = preg_split('//u', $originalName, -1, PREG_SPLIT_NO_EMPTY);
+
     if (is_array($characters) && count($characters) > 255) {
         $originalName = implode('', array_slice($characters, 0, 255));
     }
-    if (!is_dir(UPLOAD_DIRECTORY) && !mkdir(UPLOAD_DIRECTORY, 0750, true) && !is_dir(UPLOAD_DIRECTORY)) {
-        throw new RuntimeException('Direktori penyimpanan lampiran tidak dapat dibuat.');
+
+    if (
+        !is_dir(UPLOAD_DIRECTORY)
+        && !mkdir(UPLOAD_DIRECTORY, 0750, true)
+        && !is_dir(UPLOAD_DIRECTORY)
+    ) {
+        throw new RuntimeException('Folder penyimpanan lampiran gagal dibuat.');
     }
 
-    $storageName = bin2hex(random_bytes(16)) . $extensions[$mime];
+    $storageName = bin2hex(random_bytes(16)) . $allowedTypes[$mime];
     $destination = UPLOAD_DIRECTORY . '/' . $storageName;
-    if (!move_uploaded_file((string) $file['tmp_name'], $destination)) {
-        throw new RuntimeException('Lampiran tidak dapat disimpan.');
+
+    if (!move_uploaded_file($temporaryPath, $destination)) {
+        throw new RuntimeException('Lampiran gagal disimpan.');
     }
 
     return [

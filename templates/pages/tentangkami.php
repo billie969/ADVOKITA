@@ -465,29 +465,6 @@
   margin-bottom: 0;
 }
 
-.kalabahu-subtitle {
-  font-size: 17px;
-  color: #b4232d;
-  margin-top: -10px;
-  margin-bottom: 20px;
-}
-
-.about-section > h3:not(.kalabahu-subtitle) {
-  color: #34445c;
-  font-size: 18px;
-  margin: 25px 0 15px;
-}
-
-.kalabahu-list {
-  padding-left: 22px;
-  color: #64748b;
-  line-height: 1.9;
-  font-size: 15px;
-}
-
-.kalabahu-list li {
-  margin-bottom: 9px;
-}
 
 .contact-list {
   display: flex;
