@@ -1,0 +1,3 @@
+<?php
+// Style Tentang Kami
+

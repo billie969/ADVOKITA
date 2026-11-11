@@ -1642,14 +1642,14 @@
 /* SCROLL ANIMATION */
 
 .reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  transition: opacity .65s ease, transform .65s ease;
+  opacity: 1;
+  transform: none;
+  transition: opacity .45s ease, transform .45s ease;
 }
 
 .reveal.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 /* RESPONSIVE */
