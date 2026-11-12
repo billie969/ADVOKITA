@@ -125,5 +125,24 @@
         </nav>
       <?php endif; ?>
     <?php endif; ?>
+
+    <?php if ($page === 'admin'): ?>
+      <script>
+      (function() {
+        var alerts = document.querySelectorAll('.notification-container .alert');
+        if (!alerts.length) return;
+        setTimeout(function() {
+          alerts.forEach(function(alert) {
+            alert.style.transition = 'opacity .4s ease, transform .4s ease, margin .4s ease';
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-8px)';
+            setTimeout(function() {
+              alert.remove();
+            }, 400);
+          });
+        }, 2000);
+      })();
+      </script>
+    <?php endif; ?>
   </body>
 </html>
