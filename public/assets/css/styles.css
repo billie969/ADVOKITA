@@ -1,27 +1,12 @@
-@import url('./core.css');
-@import url('./layout.css');
 
-/* =====================================
-   DASHBOARD - SINGLE WHITE CONTAINER
-===================================== */
-
-.dashboard-container {
-  width: 100%;
-  padding: 28px;
-  background: #ffffff;
-  border: 1px solid #eeeeee;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(42, 0, 4, 0.12);
+@view-transition {
+  navigation: auto;
 }
 
-/* Header Beranda */
-.dashboard-container .page-heading {
-  margin-bottom: 0;
-  padding: 0 0 24px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
+html {
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 /* Judul section */
@@ -327,6 +312,10 @@ body:has(.admin-red-theme) .admin-red-theme {
   .dashboard-divider {
     margin: 20px 0;
   }
+}
+
+::view-transition-old(root) {
+  animation: 160ms cubic-bezier(0.4, 0, 1, 1) both advFadeOut;
 }
 
 ::view-transition-new(root) {
