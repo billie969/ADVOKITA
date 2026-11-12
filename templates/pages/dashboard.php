@@ -536,6 +536,89 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
   overflow: hidden;
 }
 
+/* ANNOUNCEMENT SLIDER */
+.announcement-slider-wrap {
+  position: relative;
+  overflow: hidden;
+  padding: 4px 2px;
+}
+.announcement-slider-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.announcement-slider-track::-webkit-scrollbar {
+  display: none;
+}
+.announcement-slide {
+  flex: 0 0 calc(50% - 8px);
+  min-width: 280px;
+  scroll-snap-align: start;
+}
+@media (max-width: 768px) {
+  .announcement-slide {
+    flex: 0 0 88%;
+  }
+}
+.announcement-slide .announcement-item {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.announcement-slider-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+.announcement-nav-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--adv-border);
+  background: white;
+  color: var(--adv-navy);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .15s ease;
+  box-shadow: 0 2px 5px rgba(36,52,77,.04);
+}
+.announcement-nav-btn:hover {
+  background: var(--adv-red);
+  color: white;
+  border-color: var(--adv-red);
+}
+.announcement-slider-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: auto;
+}
+.announcement-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.announcement-dot.active {
+  width: 20px;
+  border-radius: 10px;
+  background: var(--adv-red);
+}
+
 /* RECENT REPORTS */
 .dash-view-all-link {
   font-size: 12px;
@@ -958,23 +1041,37 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
           <p class="dash-empty-sub">Pengumuman resmi dari pihak pengelola kampus akan dipublikasikan di sini.</p>
         </div>
       <?php else: ?>
-        <div class="row g-3">
-          <?php foreach ($announcements as $announcement): ?>
-            <div class="col-12 col-lg-6">
-              <article class="announcement-item" id="announcement-<?= (int) ($announcement['id'] ?? $loopIndex ?? 0) ?>">
-                <div class="announcement-header">
-                  <span class="announcement-tag">
-                    <i class="bi bi-info-circle-fill me-1"></i> Informasi Resmi
-                  </span>
-                  <time class="announcement-time" datetime="<?= escape($announcement['published_at']) ?>">
-                    <i class="bi bi-calendar3 me-1"></i> <?= escape(format_date($announcement['published_at'])) ?>
-                  </time>
-                </div>
-                <h3 class="announcement-title"><?= escape($announcement['title']) ?></h3>
-                <p class="announcement-snippet"><?= escape($announcement['body']) ?></p>
-              </article>
+        <div class="announcement-slider-wrap">
+          <div class="announcement-slider-track" id="announcementTrack">
+            <?php foreach ($announcements as $idx => $announcement): ?>
+              <div class="announcement-slide">
+                <article class="announcement-item" id="announcement-<?= (int) ($announcement['id'] ?? $idx) ?>">
+                  <div class="announcement-header">
+                    <span class="announcement-tag">
+                      <i class="bi bi-info-circle-fill me-1"></i> Informasi Resmi
+                    </span>
+                    <time class="announcement-time" datetime="<?= escape($announcement['published_at']) ?>">
+                      <i class="bi bi-calendar3 me-1"></i> <?= escape(format_date($announcement['published_at'])) ?>
+                    </time>
+                  </div>
+                  <h3 class="announcement-title"><?= escape($announcement['title']) ?></h3>
+                  <p class="announcement-snippet"><?= escape($announcement['body']) ?></p>
+                </article>
+              </div>
+            <?php endforeach; ?>
+          </div>
+
+          <?php if (count($announcements) > 2): ?>
+            <div class="announcement-slider-nav">
+              <div class="announcement-slider-dots" id="announcementDots"></div>
+              <button type="button" class="announcement-nav-btn" id="announcementPrev" aria-label="Geser ke kiri">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button type="button" class="announcement-nav-btn" id="announcementNext" aria-label="Geser ke kanan">
+                <i class="bi bi-chevron-right"></i>
+              </button>
             </div>
-          <?php endforeach; ?>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
     </div>
@@ -1129,5 +1226,53 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
   if (next) next.addEventListener('click', function() { moveTo(current + 1); });
 
   start();
+})();
+
+// ANNOUNCEMENT HORIZONTAL SLIDER
+(function() {
+  var track = document.getElementById('announcementTrack');
+  if (!track) return;
+  var slides = track.querySelectorAll('.announcement-slide');
+  if (!slides.length) return;
+
+  var prevBtn = document.getElementById('announcementPrev');
+  var nextBtn = document.getElementById('announcementNext');
+  var dotsWrap = document.getElementById('announcementDots');
+
+  var slideWidth = function() {
+    return slides[0].getBoundingClientRect().width + 16;
+  };
+
+  if (dotsWrap && slides.length > 2) {
+    slides.forEach(function(_, i) {
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'announcement-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Ke slide ' + (i + 1));
+      dot.addEventListener('click', function() {
+        track.scrollTo({ left: i * slideWidth(), behavior: 'smooth' });
+      });
+      dotsWrap.appendChild(dot);
+    });
+
+    track.addEventListener('scroll', function() {
+      var activeIndex = Math.round(track.scrollLeft / slideWidth());
+      var dots = dotsWrap.querySelectorAll('.announcement-dot');
+      dots.forEach(function(d, idx) {
+        d.classList.toggle('active', idx === activeIndex);
+      });
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function() {
+      track.scrollBy({ left: -slideWidth(), behavior: 'smooth' });
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function() {
+      track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
+    });
+  }
 })();
 </script>
