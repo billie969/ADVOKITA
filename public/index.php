@@ -137,6 +137,14 @@ $announcements = [];
 $announcementToEdit = null;
 $announcementCount = 0;
 $pendingCount = 0;
+$reportCount = 0;
+$reportPageSize = 20;
+$reportPage = 1;
+$reportPageCount = 1;
+$requestedReportPage = $_GET['reportPage'] ?? null;
+if (is_string($requestedReportPage) && ctype_digit($requestedReportPage)) {
+    $reportPage = max(1, (int) $requestedReportPage);
+}
 $user = current_user();
 $db = null;
 
@@ -297,7 +305,7 @@ try {
                     throw new InputError('Laporan tidak ditemukan atau sudah diproses.', 409);
                 }
                 flash('success', 'Keputusan laporan berhasil disimpan.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-create':
                 $user = require_user('admin');
@@ -320,7 +328,7 @@ try {
                     'created_by' => (string) $user['id'],
                 ]);
                 flash('success', 'Pengumuman berhasil disimpan.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-edit':
                 require_user('admin');
@@ -376,7 +384,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan.', 404);
                 }
                 flash('success', 'Status pengumuman berhasil diperbarui.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-delete':
                 require_user('admin');
@@ -387,7 +395,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan.', 404);
                 }
                 flash('success', 'Pengumuman berhasil dihapus.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             default:
                 throw new InputError('Permintaan tidak dikenal.');
@@ -429,6 +437,20 @@ try {
         $caseNumber = $_GET['case'] ?? '';
         $report = is_string($caseNumber) ? find_report($db, $caseNumber, $user) : null;
     } elseif ($page === 'admin') {
+ rizkybranch
+        $reportStats = report_stats($db);
+        $reportCount = $reportStats['total'];
+        $pendingCount = $reportStats['pending'];
+        $reportPageCount = max(1, (int) ceil($reportCount / $reportPageSize));
+        $reportPage = min($reportPage, $reportPageCount);
+        $reports = report_rows(
+            $db,
+            (string) $user['id'],
+            true,
+            $reportPageSize,
+            ($reportPage - 1) * $reportPageSize,
+        );
+
         try {
             $reportFilters = validate_report_filters($_GET);
         } catch (InputError $filterError) {
@@ -436,6 +458,7 @@ try {
         }
         $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
         $reportStatistics = report_statistics($db);
+ main
         $announcements = $db->query(
             'SELECT id, title, body, category, is_pinned, is_published,
                     published_at, expires_at, updated_at
@@ -446,6 +469,8 @@ try {
             $announcement['is_published'] = is_checked($announcement['is_published']);
         }
         unset($announcement);
+ rizkybranch
+=======
 
         if (isset($_GET['editAnnouncement'])) {
             try {
@@ -467,6 +492,7 @@ try {
             }
         }
         $pendingCount = $reportStatistics['pending'];
+main
         $announcementCount = count($announcements);
     }
 } catch (InputError $actionError) {
@@ -517,8 +543,23 @@ if (
     && $db instanceof PDO
 ) {
     try {
+ rizkybranch
+        $reportStats = report_stats($db);
+        $reportCount = $reportStats['total'];
+        $pendingCount = $reportStats['pending'];
+        $reportPageCount = max(1, (int) ceil($reportCount / $reportPageSize));
+        $reportPage = min($reportPage, $reportPageCount);
+        $reports = report_rows(
+            $db,
+            (string) $user['id'],
+            true,
+            $reportPageSize,
+            ($reportPage - 1) * $reportPageSize,
+        );
+
         $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
         $reportStatistics = report_statistics($db);
+ main
         $announcements = $db->query(
             'SELECT id, title, body, category, is_pinned, is_published,
                     published_at, expires_at, updated_at
@@ -529,7 +570,10 @@ if (
             $announcement['is_published'] = is_checked($announcement['is_published']);
         }
         unset($announcement);
+ rizkybranch
+
         $pendingCount = $reportStatistics['pending'];
+ main
         $announcementCount = count($announcements);
         if (($formValues['action'] ?? '') === 'announcement-edit' && isset($formValues['announcementId'])) {
             $statement = $db->prepare(

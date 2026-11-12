@@ -1,5 +1,8 @@
 <?php
 /** @var int $pendingCount */
+/** @var int $reportCount */
+/** @var int $reportPage */
+/** @var int $reportPageCount */
 /** @var int $announcementCount */
 /** @var array<string, int> $reportStatistics */
 /** @var array<string, string|null> $reportFilters */
@@ -41,6 +44,9 @@ if (is_string($announcementExpiry) && $announcementExpiry !== '') {
   </section>
 
   <section class="admin-section" aria-labelledby="adminReportsHeading">
+rizkybranch
+    <div class="section-heading"><div><span class="eyebrow">TINJAUAN</span><h2 id="adminReportsHeading">Laporan pengaduan</h2></div><span class="text-secondary small"><?= escape($pendingCount) ?> menunggu · <?= escape($reportCount) ?> total</span></div>
+
     <div class="section-heading"><div><span class="eyebrow">TINJAUAN</span><h2 id="adminReportsHeading">Laporan pengaduan</h2></div><span class="text-secondary small"><?= escape($reportStatistics['pending']) ?> menunggu · <?= escape($reportStatistics['total']) ?> total</span></div>
     <form class="admin-report-filters" method="get" action="/index.php" aria-label="Filter laporan">
       <input type="hidden" name="page" value="admin">
@@ -51,6 +57,8 @@ if (is_string($announcementExpiry) && $announcementExpiry !== '') {
       <label><span>Sampai tanggal</span><input class="form-control" type="date" name="dateTo" value="<?= escape($reportFilters['dateTo'] ?? '') ?>"></label>
       <div class="admin-filter-actions"><button class="btn btn-danger btn-sm" type="submit"><i class="bi bi-search me-1" aria-hidden="true"></i>Filter</button><a class="btn btn-outline-secondary btn-sm" href="<?= escape(url('admin')) ?>">Reset</a></div>
     </form>
+    
+ main
     <?php if ($reports === []): ?>
       <p class="empty-inline">Belum ada laporan yang masuk.</p>
     <?php else: ?>
@@ -103,7 +111,7 @@ if (is_string($announcementExpiry) && $announcementExpiry !== '') {
               <section class="moderation-saved-note"><h3>Riwayat keputusan</h3><p><strong><?= escape(status_label($reportItem['status'])) ?></strong><?php if ($reportItem['decided_by_name'] !== null): ?> oleh <?= escape($reportItem['decided_by_name']) ?><?php endif; ?><?php if ($reportItem['decided_at'] !== null): ?> · <?= escape(format_datetime($reportItem['decided_at'])) ?><?php endif; ?></p><?php if ($reportItem['decision_note'] !== null && $reportItem['decision_note'] !== ''): ?><p><?= escape($reportItem['decision_note']) ?></p><?php endif; ?></section>
             <?php endif; ?>
             <?php if ($isPending): ?>
-              <form class="moderation-decision-form" method="post" action="<?= escape(url('admin')) ?>" data-report-case="<?= escape($reportItem['case_number']) ?>">
+              <form class="moderation-decision-form" method="post" action="<?= escape(url('admin', ['reportPage' => (string) $reportPage])) ?>" data-report-case="<?= escape($reportItem['case_number']) ?>">
                 <?php csrf_input(); ?>
                 <input type="hidden" name="action" value="decision">
                 <input type="hidden" name="reportId" value="<?= escape($reportItem['id']) ?>">
@@ -121,12 +129,28 @@ if (is_string($announcementExpiry) && $announcementExpiry !== '') {
           </div>
         </dialog>
       <?php endforeach; ?>
+ rizkybranch
+    <?php endif; ?>
+    <?php if ($reportPageCount > 1): ?>
+      <nav class="d-flex justify-content-between align-items-center gap-3 mt-3" aria-label="Navigasi halaman laporan">
+        <span class="text-secondary small">Halaman <?= escape($reportPage) ?> dari <?= escape($reportPageCount) ?></span>
+        <div class="d-flex gap-2">
+          <?php if ($reportPage > 1): ?>
+            <a class="btn btn-sm btn-outline-secondary" rel="prev" href="<?= escape(url('admin', ['reportPage' => (string) ($reportPage - 1)])) ?>">Sebelumnya</a>
+          <?php endif; ?>
+          <?php if ($reportPage < $reportPageCount): ?>
+            <a class="btn btn-sm btn-outline-secondary" rel="next" href="<?= escape(url('admin', ['reportPage' => (string) ($reportPage + 1)])) ?>">Berikutnya</a>
+          <?php endif; ?>
+        </div>
+      </nav>
+
+ main
     <?php endif; ?>
   </section>
 
   <section class="admin-section" aria-labelledby="adminAnnouncementsHeading">
     <div class="section-heading"><div><span class="eyebrow">BERANDA</span><h2 id="adminAnnouncementsHeading">Pengumuman</h2></div><span class="text-secondary small"><?= escape($announcementCount) ?> total</span></div>
-    <form class="admin-form" method="post" action="<?= escape(url('admin')) ?>">
+    <form class="admin-form" method="post" action="<?= escape(url('admin', ['reportPage' => (string) $reportPage])) ?>">
       <?php csrf_input(); ?>
       <input type="hidden" name="action" value="<?= $editingAnnouncement ? 'announcement-edit' : 'announcement-create' ?>">
       <?php if ($editingAnnouncement): ?><input type="hidden" name="announcementId" value="<?= escape($announcementForm['id']) ?>"><?php endif; ?>
@@ -150,15 +174,23 @@ if (is_string($announcementExpiry) && $announcementExpiry !== '') {
             <p class="admin-announcement-meta"><?= escape($announcement['category']) ?> · Terbit <?= escape(format_date($announcement['published_at'])) ?><?php if ($announcement['expires_at'] !== null): ?> · Berakhir <?= escape(format_date($announcement['expires_at'])) ?><?php endif; ?></p>
             <p><?= escape($announcement['body']) ?></p>
             <div class="d-flex justify-content-end gap-2">
+ rizkybranch
+              <form method="post" action="<?= escape(url('admin', ['reportPage' => (string) $reportPage])) ?>">
+
               <a class="btn btn-sm btn-outline-secondary" href="<?= escape(url('admin', ['editAnnouncement' => $announcement['id']])) ?>"><i class="bi bi-pencil me-1" aria-hidden="true"></i>Edit</a>
               <form method="post" action="<?= escape(url('admin')) ?>">
+ main
                 <?php csrf_input(); ?>
                 <input type="hidden" name="action" value="announcement-toggle">
                 <input type="hidden" name="announcementId" value="<?= escape($announcement['id']) ?>">
                 <input type="hidden" name="isPublished" value="<?= $announcement['is_published'] ? '0' : '1' ?>">
                 <button class="btn btn-sm btn-outline-danger" type="submit"><?= $announcement['is_published'] ? 'Nonaktifkan' : 'Aktifkan' ?></button>
               </form>
+ rizkybranch
+              <form method="post" action="<?= escape(url('admin', ['reportPage' => (string) $reportPage])) ?>">
+
               <form class="announcement-delete-form" method="post" action="<?= escape(url('admin')) ?>">
+ main
                 <?php csrf_input(); ?>
                 <input type="hidden" name="action" value="announcement-delete">
                 <input type="hidden" name="announcementId" value="<?= escape($announcement['id']) ?>">
