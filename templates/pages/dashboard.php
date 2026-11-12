@@ -183,5 +183,10 @@
       <?php endif; ?>
     </section>
 
+    <!-- Informasi Bantuan -->
+    <div style="margin-top:20px; padding:12px; background:#EFF6FF; border-radius:8px; font-size:13px; color:#1E40AF;">
+      💡 Butuh bantuan? Cek nomor kasus kamu di menu Riwayat, lalu bagikan nomor itu ke admin untuk pengecekan lebih lanjut.
+    </div>
+
   </div>
 </main>
