@@ -107,5 +107,13 @@ expect_error(
     static fn () => validate_decision(['decision' => 'pending']),
     'Keputusan di luar daftar harus ditolak.',
 );
+expect_error(
+    static fn () => validate_decision(['decision' => 'approved', 'note' => '   ']),
+    'Catatan pertimbangan hukum kosong harus ditolak.',
+);
+expect_error(
+    static fn () => validate_decision(['decision' => 'rejected', 'note' => str_repeat('x', 2001)]),
+    'Catatan pertimbangan hukum di atas batas harus ditolak.',
+);
 
 fwrite(STDOUT, "Seluruh pengujian validasi PHP berhasil.\n");
