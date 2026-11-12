@@ -65,8 +65,14 @@ require __DIR__ . '/about-style.php';
 }
 </style>
 <div class="login-page">
+<<<<<<< HEAD
   <div class="login-card">
     <div class="login-form-panel">
+=======
+  <div class="login-card"><div class="login-form-panel">
+
+
+>>>>>>> 56a0480 (Apply pending UI updates (about-services, login) and registration user type)
       <?php require __DIR__ . '/about-hero.php'; ?>
       <?php require __DIR__ . '/about-nav.php'; ?>
       <!-- Services Section -->

@@ -10,10 +10,17 @@
     <form class="auth-form" method="post" action="<?= escape(url('register')) ?>" autocomplete="on">
       <?php csrf_input(); ?>
       <input type="hidden" name="action" value="register">
-      <div class="mb-4"><h2>Buat Akun Baru</h2><p class="text-secondary mb-0">Daftar untuk mengajukan laporan.</p></div>
-      <div class="mb-3">
-        <label class="form-label" for="registerName">Nama lengkap <span class="text-danger">*</span></label>
-        <input class="form-control" id="registerName" name="fullName" maxlength="120" autocomplete="name" required placeholder="Nama lengkap" value="<?= escape($formValues['fullName'] ?? '') ?>">
+
+      <div class="rg-eyebrow">Mulai bergabung</div>
+      <h2 class="rg-title">Buat Akun Baru</h2>
+      <p class="rg-lead">Daftar menggunakan data mahasiswa untuk mengajukan laporan di ADVOKITA.</p>
+
+      <div class="rg-field" style="margin-top:0">
+        <label class="rg-label" for="registerName">Nama lengkap <b>*</b></label>
+        <div class="rg-input">
+          <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+          <input id="registerName" name="fullName" maxlength="120" autocomplete="name" required placeholder="Masukkan nama lengkap" value="<?= escape($formValues['fullName'] ?? '') ?>">
+        </div>
       </div>
 
       <div class="rg-field">
