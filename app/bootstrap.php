@@ -407,11 +407,7 @@ function auth_rate_limit(): void
     }
 }
 
- rizkybranch
-function report_rows(PDO $db, string $userId, bool $admin = false, ?int $limit = null, int $offset = 0): array
-
 function report_rows(PDO $db, string $userId, bool $admin = false, array $filters = []): array
-main
 {
     $sql = "SELECT r.*, CASE WHEN r.is_anonymous THEN NULL ELSE u.full_name END AS submitter_name,
             CASE WHEN r.is_anonymous THEN NULL ELSE u.nim END AS submitter_nim,
@@ -448,38 +444,19 @@ main
             $parameters['date_to'] = $filters['dateTo'];
         }
     }
- rizkybranch
-    if (!$admin) {
-        $sql .= ' ORDER BY r.created_at DESC';
-    } elseif ($limit !== null) {
-        $sql .= ' LIMIT :report_limit OFFSET :report_offset';
-
     if ($conditions !== []) {
         $sql .= ' WHERE ' . implode(' AND ', $conditions);
- main
     }
     $sql .= $admin
         ? " ORDER BY CASE r.status WHEN 'pending' THEN 0 ELSE 1 END, r.created_at ASC"
         : ' ORDER BY r.created_at DESC';
 
     $statement = $db->prepare($sql);
- rizkybranch
-    if (!$admin) {
-        $statement->execute(['user_id' => $userId]);
-    } elseif ($limit !== null) {
-        $statement->bindValue(':report_limit', $limit, PDO::PARAM_INT);
-        $statement->bindValue(':report_offset', $offset, PDO::PARAM_INT);
-        $statement->execute();
-    } else {
-        $statement->execute();
-    }
-
     $statement->execute($parameters);
- main
     $reports = $statement->fetchAll();
 
     $attachmentsByReport = [];
-    if ($admin && $limit !== null && $reports !== []) {
+    if ($admin && $reports !== []) {
         $reportIds = array_values(array_column($reports, 'id'));
         $placeholders = [];
         $parameters = [];
@@ -528,20 +505,6 @@ main
     return $reports;
 }
 
- rizkybranch
-function report_stats(PDO $db): array
-{
-    $statistics = $db->query(
-        "SELECT COUNT(*) AS total,
-                COUNT(*) FILTER (WHERE status = 'pending') AS pending
-         FROM reports",
-    )->fetch();
-
-    return [
-        'total' => (int) ($statistics['total'] ?? 0),
-        'pending' => (int) ($statistics['pending'] ?? 0),
-    ];
-
 function report_statistics(PDO $db): array
 {
     $statement = $db->query(
@@ -553,7 +516,6 @@ function report_statistics(PDO $db): array
     );
     $statistics = $statement->fetch();
     return array_map('intval', $statistics);
- main
 }
 
 function attachment_rows(PDO $db, string $reportId): array
