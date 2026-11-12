@@ -198,7 +198,15 @@ Buka browser dan akses: `http://127.0.0.1:8000`
 
 Untuk penggunaan selain pengembangan, gunakan HTTPS dan web server PHP yang dikonfigurasi agar hanya `public/` dapat diakses.
 
-### 4. Menjalankan Pengujian Validasi
+### 4. Deployment Railway dengan Docker
+
+- Pilih builder Docker agar konfigurasi batas upload pada `Dockerfile` digunakan. Batasnya adalah `upload_max_filesize=10M` dan `post_max_size=12M`.
+- Tambahkan Railway Volume pada service dan mount, misalnya, ke `/data`.
+- Atur `UPLOAD_DIRECTORY=/data/advokita-uploads` pada Variables service. Aplikasi akan membuat subdirektori tersebut bila belum ada.
+- Atur kredensial PostgreSQL dan `SESSION_SECRET` melalui Variables Railway, bukan dengan menyalin `.env` ke image. Untuk database remote, gunakan `PGSSLMODE=require` atau mode verifikasi sertifikat yang sesuai.
+- Tanpa volume persisten, lampiran di filesystem container dapat hilang saat restart atau redeploy. Volume persisten tetap perlu dicadangkan sesuai kebijakan operasional.
+
+### 5. Menjalankan Pengujian Validasi
 Pastikan aturan validasi sistem lulus tanpa kendala:
 ```bash
 php tests/validation.php
