@@ -79,7 +79,6 @@
           <?= escape(format_date($report['incident_date'])) ?>
         </p>
       </section>
-
       <!-- Kronologi -->
       <section class="detail-section">
         <h3>
@@ -93,16 +92,14 @@
       </section>
 
       <!-- Catatan Keputusan Admin -->
-      <?php if ($report['decision_note'] !== null && $report['decision_note'] !== ''): ?>
+      <?php if ($report['status'] !== 'pending'): ?>
         <section class="detail-section">
           <h3>
             <i class="bi bi-chat-left-text me-2" aria-hidden="true"></i>
-            Catatan Penanganan
+            Keputusan Admin
           </h3>
-
-          <p class="detail-description">
-            <?= escape($report['decision_note']) ?>
-          </p>
+          <?php if ($report['decision_note'] !== null && $report['decision_note'] !== ''): ?><p class="detail-description"><?= escape($report['decision_note']) ?></p><?php endif; ?>
+          <?php if ($report['decided_at'] !== null): ?><p>Diputuskan <?= escape(format_datetime($report['decided_at'])) ?><?php if ($report['decided_by_name'] !== null): ?> oleh <?= escape($report['decided_by_name']) ?><?php endif; ?></p><?php endif; ?>
         </section>
       <?php endif; ?>
 

@@ -184,6 +184,7 @@ Agar batas lampiran aplikasi 10 MB dapat dipenuhi, konfigurasi PHP/web server ha
    ```bash
    php bin/setup-database.php
    ```
+  Skrip ini menerapkan `database/schema.sql` dan migration di `database/migrations/` secara berurutan. Migration metadata pengumuman menambah kategori, pin, dan tanggal berakhir. Tinjau migration sebelum menjalankannya pada database produksi.
 5. Buat akun Admin pertama:
    ```bash
    php bin/create-admin.php

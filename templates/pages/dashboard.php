@@ -1048,7 +1048,8 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
                 <article class="announcement-item" id="announcement-<?= (int) ($announcement['id'] ?? $idx) ?>">
                   <div class="announcement-header">
                     <span class="announcement-tag">
-                      <i class="bi bi-info-circle-fill me-1"></i> Informasi Resmi
+                      <i class="bi bi-info-circle-fill me-1"></i>
+                      <?= escape($announcement['category']) ?><?= $announcement['is_pinned'] ? ' · PENTING' : '' ?>
                     </span>
                     <time class="announcement-time" datetime="<?= escape($announcement['published_at']) ?>">
                       <i class="bi bi-calendar3 me-1"></i> <?= escape(format_date($announcement['published_at'])) ?>
@@ -1056,6 +1057,9 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
                   </div>
                   <h3 class="announcement-title"><?= escape($announcement['title']) ?></h3>
                   <p class="announcement-snippet"><?= escape($announcement['body']) ?></p>
+                  <?php if ($announcement['expires_at'] !== null): ?>
+                    <small class="announcement-expiry">Berlaku hingga <?= escape(format_date($announcement['expires_at'])) ?></small>
+                  <?php endif; ?>
                 </article>
               </div>
             <?php endforeach; ?>
@@ -1114,7 +1118,7 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
                   <i class="bi bi-tag me-1"></i><?= escape($reportItem['category']) ?>
                 </span>
               </div>
-              
+
               <?php
                 $status = (string) ($reportItem['status'] ?? 'pending');
                 $badgeClass = match ($status) {
