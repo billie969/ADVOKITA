@@ -125,5 +125,10 @@ $filters = $filters ?? ['case' => '', 'status' => ''];
 
     <?php endif; ?>
 
+    <!-- Informasi Peringatan untuk Pengguna -->
+    <div style="margin-top:20px; padding:12px; background:#FEF3C7; border-radius:8px; font-size:13px; color:#92400E;">
+      ⚠️ Jika status laporan kamu belum berubah lebih dari 3 hari, silakan hubungi admin dengan menyertakan nomor kasus kamu.
+    </div>
+
   </div>
 </main>
