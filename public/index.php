@@ -145,6 +145,13 @@ $requestedReportPage = $_GET['reportPage'] ?? null;
 if (is_string($requestedReportPage) && ctype_digit($requestedReportPage)) {
     $reportPage = max(1, (int) $requestedReportPage);
 }
+$adminReturnParameters = ['reportPage' => (string) $reportPage];
+foreach (['search', 'status', 'category', 'dateFrom', 'dateTo'] as $filterName) {
+    $filterValue = $_GET[$filterName] ?? null;
+    if (is_string($filterValue) && $filterValue !== '') {
+        $adminReturnParameters[$filterName] = $filterValue;
+    }
+}
 $user = current_user();
 $db = null;
 
@@ -329,7 +336,7 @@ try {
                     throw $decisionError;
                 }
                 flash('success', 'Keputusan laporan berhasil disimpan.');
-                redirect('admin', ['reportPage' => (string) $reportPage]);
+                redirect('admin', $adminReturnParameters);
 
             case 'announcement-create':
                 $user = require_user('admin');
@@ -352,7 +359,7 @@ try {
                     'created_by' => (string) $user['id'],
                 ]);
                 flash('success', 'Pengumuman berhasil disimpan.');
-                redirect('admin', ['reportPage' => (string) $reportPage]);
+                redirect('admin', $adminReturnParameters);
 
             case 'announcement-edit':
                 require_user('admin');
@@ -382,7 +389,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan atau tidak berubah.', 404);
                 }
                 flash('success', 'Pengumuman berhasil diperbarui.');
-                redirect('admin');
+                redirect('admin', $adminReturnParameters);
 
             case 'announcement-toggle':
                 require_user('admin');
@@ -408,7 +415,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan.', 404);
                 }
                 flash('success', 'Status pengumuman berhasil diperbarui.');
-                redirect('admin', ['reportPage' => (string) $reportPage]);
+                redirect('admin', $adminReturnParameters);
 
             case 'announcement-delete':
                 require_user('admin');
@@ -419,7 +426,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan.', 404);
                 }
                 flash('success', 'Pengumuman berhasil dihapus.');
-                redirect('admin', ['reportPage' => (string) $reportPage]);
+                redirect('admin', $adminReturnParameters);
 
             default:
                 throw new InputError('Permintaan tidak dikenal.');
@@ -466,9 +473,19 @@ try {
         } catch (InputError $filterError) {
             $error = $filterError->getMessage();
         }
-        $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
+        $reportCount = report_count($db, $reportFilters);
+        $pagination = report_pagination($reportCount, $reportPage, $reportPageSize);
+        $reportPage = $pagination['page'];
+        $reportPageCount = $pagination['pageCount'];
+        $reports = report_rows(
+            $db,
+            (string) $user['id'],
+            true,
+            $reportFilters,
+            $reportPageSize,
+            $pagination['offset'],
+        );
         $reportStatistics = report_statistics($db);
-        $reportCount = $reportStatistics['total'];
         $pendingCount = $reportStatistics['pending'];
         $announcements = $db->query(
             'SELECT id, title, body, category, is_pinned, is_published,
@@ -550,9 +567,24 @@ if (
     && $db instanceof PDO
 ) {
     try {
-        $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
+        try {
+            $reportFilters = validate_report_filters($_GET);
+        } catch (InputError $filterError) {
+            $error = $filterError->getMessage();
+        }
+        $reportCount = report_count($db, $reportFilters);
+        $pagination = report_pagination($reportCount, $reportPage, $reportPageSize);
+        $reportPage = $pagination['page'];
+        $reportPageCount = $pagination['pageCount'];
+        $reports = report_rows(
+            $db,
+            (string) $user['id'],
+            true,
+            $reportFilters,
+            $reportPageSize,
+            $pagination['offset'],
+        );
         $reportStatistics = report_statistics($db);
-        $reportCount = $reportStatistics['total'];
         $announcements = $db->query(
             'SELECT id, title, body, category, is_pinned, is_published,
                     published_at, expires_at, updated_at

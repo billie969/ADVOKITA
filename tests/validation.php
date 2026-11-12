@@ -104,6 +104,22 @@ expect_error(
     'Rentang tanggal terbalik harus ditolak.',
 );
 
+$reportPagination = report_pagination(43, 2, 20);
+expect(
+    $reportPagination === ['page' => 2, 'pageCount' => 3, 'offset' => 20],
+    'Paginasi laporan harus menghitung halaman dan offset.',
+);
+$lastReportPage = report_pagination(21, 99, 20);
+expect(
+    $lastReportPage === ['page' => 2, 'pageCount' => 2, 'offset' => 20],
+    'Halaman laporan yang melebihi hasil harus dibatasi ke halaman terakhir.',
+);
+$emptyReportPage = report_pagination(0, 1, 20);
+expect(
+    $emptyReportPage === ['page' => 1, 'pageCount' => 1, 'offset' => 0],
+    'Hasil laporan kosong tetap harus memiliki satu halaman.',
+);
+
 $announcement = validate_announcement([
     'title' => 'Jam layanan',
     'body' => 'Layanan tersedia pada jam kerja.',
