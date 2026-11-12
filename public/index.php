@@ -137,6 +137,14 @@ $announcements = [];
 $announcementToEdit = null;
 $announcementCount = 0;
 $pendingCount = 0;
+$reportCount = 0;
+$reportPageSize = 20;
+$reportPage = 1;
+$reportPageCount = 1;
+$requestedReportPage = $_GET['reportPage'] ?? null;
+if (is_string($requestedReportPage) && ctype_digit($requestedReportPage)) {
+    $reportPage = max(1, (int) $requestedReportPage);
+}
 $user = current_user();
 $db = null;
 
@@ -321,7 +329,7 @@ try {
                     throw $decisionError;
                 }
                 flash('success', 'Keputusan laporan berhasil disimpan.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-create':
                 $user = require_user('admin');
@@ -344,7 +352,7 @@ try {
                     'created_by' => (string) $user['id'],
                 ]);
                 flash('success', 'Pengumuman berhasil disimpan.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-edit':
                 require_user('admin');
@@ -400,7 +408,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan.', 404);
                 }
                 flash('success', 'Status pengumuman berhasil diperbarui.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-delete':
                 require_user('admin');
@@ -411,7 +419,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan.', 404);
                 }
                 flash('success', 'Pengumuman berhasil dihapus.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             default:
                 throw new InputError('Permintaan tidak dikenal.');
@@ -460,6 +468,8 @@ try {
         }
         $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
         $reportStatistics = report_statistics($db);
+        $reportCount = $reportStatistics['total'];
+        $pendingCount = $reportStatistics['pending'];
         $announcements = $db->query(
             'SELECT id, title, body, category, is_pinned, is_published,
                     published_at, expires_at, updated_at
@@ -490,7 +500,6 @@ try {
                 $error = $editError->getMessage();
             }
         }
-        $pendingCount = $reportStatistics['pending'];
         $announcementCount = count($announcements);
     }
 } catch (InputError $actionError) {
@@ -543,6 +552,7 @@ if (
     try {
         $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
         $reportStatistics = report_statistics($db);
+        $reportCount = $reportStatistics['total'];
         $announcements = $db->query(
             'SELECT id, title, body, category, is_pinned, is_published,
                     published_at, expires_at, updated_at

@@ -545,24 +545,17 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
 .announcement-slider-track {
   display: flex;
   gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding-bottom: 8px;
-}
-.announcement-slider-track::-webkit-scrollbar {
-  display: none;
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
 }
 .announcement-slide {
   flex: 0 0 calc(50% - 8px);
   min-width: 280px;
-  scroll-snap-align: start;
 }
 @media (max-width: 768px) {
   .announcement-slide {
-    flex: 0 0 88%;
+    flex: 0 0 calc(100% - 0px);
+    min-width: 0;
   }
 }
 .announcement-slide .announcement-item {
@@ -596,6 +589,11 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
   background: var(--adv-red);
   color: white;
   border-color: var(--adv-red);
+}
+.announcement-nav-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 .announcement-slider-dots {
   display: flex;
@@ -1188,6 +1186,7 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
 </main>
 
 <script>
+// KILAS INFO (NEWS TICKER)
 (function() {
   var list = document.getElementById('tickerList');
   if (!list) return;
@@ -1196,12 +1195,16 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
 
   var current = 0;
   var total = items.length;
-  var itemHeight = 24;
   var timer = null;
+
+  function getItemHeight() {
+    return items[0] ? items[0].offsetHeight || 24 : 24;
+  }
 
   function moveTo(index) {
     current = (index + total) % total;
-    list.style.transform = 'translateY(-' + (current * itemHeight) + 'px)';
+    var h = getItemHeight();
+    list.style.transform = 'translateY(-' + (current * h) + 'px)';
   }
 
   function start() {
@@ -1226,57 +1229,102 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
 
   var prev = document.getElementById('tickerPrev');
   var next = document.getElementById('tickerNext');
-  if (prev) prev.addEventListener('click', function() { moveTo(current - 1); });
-  if (next) next.addEventListener('click', function() { moveTo(current + 1); });
+  if (prev) {
+    prev.addEventListener('click', function(e) {
+      e.preventDefault();
+      moveTo(current - 1);
+      start();
+    });
+  }
+  if (next) {
+    next.addEventListener('click', function(e) {
+      e.preventDefault();
+      moveTo(current + 1);
+      start();
+    });
+  }
 
   start();
 })();
 
 // ANNOUNCEMENT HORIZONTAL SLIDER
 (function() {
-  var track = document.getElementById('announcementTrack');
-  if (!track) return;
-  var slides = track.querySelectorAll('.announcement-slide');
+  var wrap  = document.getElementById('announcementTrack');
+  if (!wrap) return;
+  var slides   = Array.from(wrap.querySelectorAll('.announcement-slide'));
   if (!slides.length) return;
 
-  var prevBtn = document.getElementById('announcementPrev');
-  var nextBtn = document.getElementById('announcementNext');
+  var prevBtn  = document.getElementById('announcementPrev');
+  var nextBtn  = document.getElementById('announcementNext');
   var dotsWrap = document.getElementById('announcementDots');
 
-  var slideWidth = function() {
-    return slides[0].getBoundingClientRect().width + 16;
-  };
+  // Berapa slide yang terlihat sekaligus (1 di mobile, 2 di desktop)
+  function perPage() {
+    return window.innerWidth <= 768 ? 1 : 2;
+  }
 
-  if (dotsWrap && slides.length > 2) {
-    slides.forEach(function(_, i) {
-      var dot = document.createElement('button');
-      dot.type = 'button';
-      dot.className = 'announcement-dot' + (i === 0 ? ' active' : '');
-      dot.setAttribute('aria-label', 'Ke slide ' + (i + 1));
-      dot.addEventListener('click', function() {
-        track.scrollTo({ left: i * slideWidth(), behavior: 'smooth' });
-      });
-      dotsWrap.appendChild(dot);
-    });
+  var current = 0; // indeks slide paling kiri yang tampil
 
-    track.addEventListener('scroll', function() {
-      var activeIndex = Math.round(track.scrollLeft / slideWidth());
-      var dots = dotsWrap.querySelectorAll('.announcement-dot');
-      dots.forEach(function(d, idx) {
-        d.classList.toggle('active', idx === activeIndex);
-      });
+  function maxIndex() {
+    return Math.max(0, slides.length - perPage());
+  }
+
+  function applyTransform() {
+    var pp   = perPage();
+    var gap  = 16;
+    // Lebar satu slide = (wrap.offsetWidth - gap*(pp-1)) / pp
+    var slideW = (wrap.offsetWidth - gap * (pp - 1)) / pp;
+    var offset = current * (slideW + gap);
+    wrap.style.transform = 'translateX(-' + offset + 'px)';
+  }
+
+  function updateButtons() {
+    if (prevBtn) prevBtn.disabled = current <= 0;
+    if (nextBtn) nextBtn.disabled = current >= maxIndex();
+  }
+
+  function updateDots() {
+    if (!dotsWrap) return;
+    var dots = dotsWrap.querySelectorAll('.announcement-dot');
+    dots.forEach(function(d, i) {
+      d.classList.toggle('active', i === current);
     });
+  }
+
+  function goTo(idx) {
+    current = Math.max(0, Math.min(idx, maxIndex()));
+    applyTransform();
+    updateButtons();
+    updateDots();
+  }
+
+  // Buat dots — satu per "halaman"
+  if (dotsWrap) {
+    dotsWrap.innerHTML = '';
+    var totalDots = maxIndex() + 1;
+    for (var i = 0; i < totalDots; i++) {
+      (function(idx) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'announcement-dot' + (idx === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Ke slide ' + (idx + 1));
+        dot.addEventListener('click', function() { goTo(idx); });
+        dotsWrap.appendChild(dot);
+      })(i);
+    }
   }
 
   if (prevBtn) {
-    prevBtn.addEventListener('click', function() {
-      track.scrollBy({ left: -slideWidth(), behavior: 'smooth' });
-    });
+    prevBtn.addEventListener('click', function() { goTo(current - 1); });
   }
   if (nextBtn) {
-    nextBtn.addEventListener('click', function() {
-      track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
-    });
+    nextBtn.addEventListener('click', function() { goTo(current + 1); });
   }
+
+  // Recalculate saat resize
+  window.addEventListener('resize', function() { goTo(Math.min(current, maxIndex())); });
+
+  // Init
+  goTo(0);
 })();
 </script>

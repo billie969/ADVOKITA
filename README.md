@@ -170,7 +170,7 @@ Agar batas lampiran aplikasi 10 MB dapat dipenuhi, konfigurasi PHP/web server ha
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\scripts\setup-local-db.ps1
    ```
-   Skrip membuat role/database hanya bila keduanya belum ada, membuat kata sandi lokal dan rahasia sesi, lalu menyimpannya pada `.env`. Skrip tidak menimpa role/database yang sudah ada.
+  Skrip membuat role/database hanya bila keduanya belum ada, membuat kata sandi lokal dan rahasia sesi, lalu menyimpannya pada `.env`. Skrip tidak menimpa role/database yang sudah ada. Skrip juga mengganti `SESSION_SECRET=replace-me` dengan nilai acak.
 3. Sesuaikan kredensial PostgreSQL Anda pada berkas `.env`:
    ```env
    PGHOST=127.0.0.1
@@ -178,8 +178,9 @@ Agar batas lampiran aplikasi 10 MB dapat dipenuhi, konfigurasi PHP/web server ha
    PGDATABASE=advokita
    PGUSER=postgres
    PGPASSWORD=password_lokal_anda
-   SESSION_SECRET=kunci_acak_minimal_32_karakter_untuk_keamanan_sesi
+  SESSION_SECRET=replace-me
    ```
+  Jika tidak memakai skrip setup Windows, ganti placeholder tersebut dengan secret acak unik minimal 32 karakter sebelum menjalankan aplikasi. Jangan gunakan nilai placeholder di lingkungan aktif.
 4. Eksekusi skema tabel database:
    ```bash
    php bin/setup-database.php

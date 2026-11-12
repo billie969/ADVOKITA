@@ -1,5 +1,4 @@
 <?php
-/** @var int $pendingCount */
 /** @var int $announcementCount */
 /** @var array<string, int> $reportStatistics */
 /** @var array<string, string|null> $reportFilters */
@@ -115,7 +114,7 @@ if (is_string($announcementExpiry) && $announcementExpiry !== '') {
               </section>
             <?php endif; ?>
             <?php if ($isPending): ?>
-              <form class="moderation-decision-form" method="post" action="<?= escape(url('admin')) ?>" data-report-case="<?= escape($reportItem['case_number']) ?>">
+              <form class="moderation-decision-form" method="post" action="<?= escape(url('admin', ['reportPage' => (string) $reportPage])) ?>" data-report-case="<?= escape($reportItem['case_number']) ?>">
                 <?php csrf_input(); ?>
                 <input type="hidden" name="action" value="decision">
                 <input type="hidden" name="reportId" value="<?= escape($reportItem['id']) ?>">
@@ -138,7 +137,7 @@ if (is_string($announcementExpiry) && $announcementExpiry !== '') {
 
   <section class="admin-section" aria-labelledby="adminAnnouncementsHeading">
     <div class="section-heading"><div><span class="eyebrow">BERANDA</span><h2 id="adminAnnouncementsHeading">Pengumuman</h2></div><span class="text-secondary small"><?= escape($announcementCount) ?> total</span></div>
-    <form class="admin-form" method="post" action="<?= escape(url('admin')) ?>">
+    <form class="admin-form" method="post" action="<?= escape(url('admin', ['reportPage' => (string) $reportPage])) ?>">
       <?php csrf_input(); ?>
       <input type="hidden" name="action" value="<?= $editingAnnouncement ? 'announcement-edit' : 'announcement-create' ?>">
       <?php if ($editingAnnouncement): ?><input type="hidden" name="announcementId" value="<?= escape($announcementForm['id']) ?>"><?php endif; ?>

@@ -454,27 +454,74 @@ function report_rows(PDO $db, string $userId, bool $admin = false, array $filter
     $statement = $db->prepare($sql);
     $statement->execute($parameters);
     $reports = $statement->fetchAll();
+
+    $attachmentsByReport = [];
+    if ($admin && $reports !== []) {
+        $reportIds = array_values(array_column($reports, 'id'));
+        $placeholders = [];
+        $parameters = [];
+        foreach ($reportIds as $index => $reportId) {
+            $parameter = 'report_id_' . $index;
+            $placeholders[] = ':' . $parameter;
+            $parameters[$parameter] = (string) $reportId;
+        }
+
+        $attachmentStatement = $db->prepare(
+            'SELECT report_id, id, original_name AS name
+             FROM report_attachments
+             WHERE report_id IN (' . implode(', ', $placeholders) . ')
+             ORDER BY report_id, id',
+        );
+        $attachmentStatement->execute($parameters);
+    } elseif (!$admin || $reports !== []) {
+        $attachmentSql = 'SELECT a.report_id, a.id, a.original_name AS name
+                          FROM report_attachments a
+                          JOIN reports r ON r.id = a.report_id';
+        if (!$admin) {
+            $attachmentSql .= ' WHERE r.user_id = :user_id';
+        }
+        $attachmentSql .= ' ORDER BY a.report_id, a.id';
+        $attachmentStatement = $db->prepare($attachmentSql);
+        if ($admin) {
+            $attachmentStatement->execute();
+        } else {
+            $attachmentStatement->execute(['user_id' => $userId]);
+        }
+    }
+
+    if (isset($attachmentStatement)) {
+        foreach ($attachmentStatement->fetchAll() as $attachment) {
+            $attachmentsByReport[(string) $attachment['report_id']][] = [
+                'id' => $attachment['id'],
+                'name' => $attachment['name'],
+            ];
+        }
+    }
+
+    $decisionHistoryByReport = [];
+    if ($admin && $reports !== []) {
+        $decisionStatement = $db->prepare(
+            'SELECT d.report_id, d.decision, d.decision_note, d.decided_at,
+                    reviewer.full_name AS decided_by_name
+             FROM report_decision_logs d
+             JOIN users reviewer ON reviewer.id = d.decided_by
+             WHERE d.report_id IN (' . implode(', ', $placeholders) . ')
+             ORDER BY d.report_id, d.decided_at DESC, d.id DESC',
+        );
+        $decisionStatement->execute($parameters);
+        foreach ($decisionStatement->fetchAll() as $decisionRecord) {
+            $decisionHistoryByReport[(string) $decisionRecord['report_id']][] = $decisionRecord;
+        }
+    }
+
     foreach ($reports as &$report) {
         if ($admin) {
-            $report['decision_history'] = decision_history_rows($db, (string) $report['id']);
+            $report['decision_history'] = $decisionHistoryByReport[(string) $report['id']] ?? [];
         }
-        $report['attachments'] = attachment_rows($db, (string) $report['id']);
+        $report['attachments'] = $attachmentsByReport[(string) $report['id']] ?? [];
     }
     unset($report);
     return $reports;
-}
-
-function decision_history_rows(PDO $db, string $reportId): array
-{
-    $statement = $db->prepare(
-        'SELECT d.decision, d.decision_note, d.decided_at, reviewer.full_name AS decided_by_name
-         FROM report_decision_logs d
-         JOIN users reviewer ON reviewer.id = d.decided_by
-         WHERE d.report_id = :report_id
-         ORDER BY d.decided_at DESC, d.id DESC',
-    );
-    $statement->execute(['report_id' => $reportId]);
-    return $statement->fetchAll();
 }
 
 function report_statistics(PDO $db): array
