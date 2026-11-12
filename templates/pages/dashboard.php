@@ -1,6 +1,8 @@
+
 <?php
 // Modul: Dashboard Mahasiswa
 // Author: Natasya Surya Ramadhani (2455061002)
+
 /** @var array<int, array<string, mixed>> $announcements */
 /** @var array<int, array<string, mixed>> $reports */
 ?>
@@ -37,10 +39,16 @@
 
       <div class="announcement-list">
         <?php if ($announcements === []): ?>
-          <p class="announcement-empty">
-            Belum ada pengumuman yang diterbitkan.
-          </p>
+
+          <!-- Tampilan jika belum ada pengumuman -->
+          <div style="text-align:center; padding:30px; color:#6B7280;">
+            <div style="font-size:32px;">📢</div>
+            <p>Belum ada pengumuman terbaru.</p>
+            <p style="font-size:13px;">Cek lagi nanti, ya!</p>
+          </div>
+
         <?php else: ?>
+
           <?php foreach ($announcements as $announcement): ?>
             <article class="announcement-card">
               <span class="announcement-icon" aria-hidden="true">
@@ -59,6 +67,7 @@
               </div>
             </article>
           <?php endforeach; ?>
+
         <?php endif; ?>
       </div>
     </section>
