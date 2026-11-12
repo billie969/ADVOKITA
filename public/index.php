@@ -116,7 +116,7 @@ $pageNames = array_merge(
     ['auth', 'login', 'register', 'dashboard', 'report', 'history', 'detail', 'admin', 'attachment'],
     $aboutPages,
 );
-$page = $_GET['page'] ?? (current_user() === null ? 'login' : (current_user()['role'] === 'admin' ? 'admin' : 'dashboard'));
+$page = $_GET['page'] ?? (current_user() === null ? 'about-profile' : (current_user()['role'] === 'admin' ? 'admin' : 'dashboard'));
 if (!is_string($page) || !in_array($page, $pageNames, true)) {
     http_response_code(404);
     $page = 'login';
