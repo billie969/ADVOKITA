@@ -40,7 +40,6 @@
       <div class="announcement-list">
         <?php if ($announcements === []): ?>
 
-          <!-- Tampilan jika belum ada pengumuman -->
           <div style="text-align:center; padding:30px; color:#6B7280;">
             <div style="font-size:32px;">📢</div>
             <p>Belum ada pengumuman terbaru.</p>
@@ -76,6 +75,39 @@
 
     <!-- Laporan Terbaru -->
     <section>
+
+      <?php
+        // Menghitung statistik laporan
+        $total = count($reports ?? []);
+
+        $menunggu = count(array_filter(
+          $reports ?? [],
+          fn($r) => ($r['status'] ?? '') === 'pending'
+        ));
+
+        $selesai = count(array_filter(
+          $reports ?? [],
+          fn($r) => ($r['status'] ?? '') === 'done'
+        ));
+      ?>
+
+      <!-- Ringkasan Statistik Pengaduan -->
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+
+        <div style="padding:12px 18px; border-radius:10px; background:#F3F4F6;">
+          <strong>Total:</strong> <?= $total ?>
+        </div>
+
+        <div style="padding:12px 18px; border-radius:10px; background:#FEF3C7;">
+          <strong>Menunggu:</strong> <?= $menunggu ?>
+        </div>
+
+        <div style="padding:12px 18px; border-radius:10px; background:#D1FAE5;">
+          <strong>Selesai:</strong> <?= $selesai ?>
+        </div>
+
+      </div>
+
       <?php if ($reports !== []): ?>
 
         <div class="section-heading">
