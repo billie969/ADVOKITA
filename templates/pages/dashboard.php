@@ -8,7 +8,7 @@
 ?>
 
 <main class="container page-content">
-  <div class="dashboard-container">
+  <div class="dashboard-container" style="padding:12px; max-width:100%; overflow-x:hidden;">
 
     <!-- Header Beranda -->
     <div class="page-heading d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
