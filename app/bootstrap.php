@@ -39,8 +39,7 @@ foreach ([APP_ROOT . '/.env'] as $environmentFile) {
     }
 }
 
-$isSecure = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off')
-    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+$isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off';
 session_name('advokita_sid');
 session_set_cookie_params([
     'lifetime' => 8 * 60 * 60,
@@ -69,20 +68,20 @@ final class InputError extends RuntimeException
     }
 }
 
-function session_secret(): string
-{
-    $secret = getenv('SESSION_SECRET');
-    if ($secret === false || strlen($secret) < 32) {
-        throw new RuntimeException('SESSION_SECRET harus diatur dengan minimal 32 karakter.');
-    }
-    return $secret;
-}
-
 function database(): PDO
 {
     static $connection;
     if ($connection instanceof PDO) {
         return $connection;
+    }
+
+    function session_secret(): string
+    {
+        $secret = getenv('SESSION_SECRET');
+        if ($secret === false || strlen($secret) < 32) {
+            throw new RuntimeException('SESSION_SECRET harus diatur dengan minimal 32 karakter.');
+        }
+        return $secret;
     }
 
     $host = getenv('PGHOST') ?: '127.0.0.1';
@@ -91,28 +90,11 @@ function database(): PDO
     $user = getenv('PGUSER') ?: 'advokita_app';
     $password = getenv('PGPASSWORD');
     if ($password === false || $password === '') {
-        throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi database.');
-    }
-
-    $isLocalHost = in_array(strtolower($host), ['127.0.0.1', 'localhost', '::1'], true);
-    $sslmode = getenv('PGSSLMODE');
-    if ($sslmode === false || $sslmode === '') {
-        $sslmode = $isLocalHost ? '' : 'require';
-    }
-    if ($sslmode !== '' && !in_array($sslmode, ['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'], true)) {
-        throw new RuntimeException('PGSSLMODE tidak valid.');
-    }
-    if (!$isLocalHost && in_array($sslmode, ['disable', 'allow', 'prefer'], true)) {
-        throw new RuntimeException('PGSSLMODE harus require, verify-ca, atau verify-full untuk database remote.');
-    }
-
-    $dsn = "pgsql:host={$host};port={$port};dbname={$name}";
-    if ($sslmode !== '') {
-        $dsn .= ";sslmode={$sslmode}";
+        throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi lokal.');
     }
 
     $connection = new PDO(
-        $dsn,
+        "pgsql:host={$host};port={$port};dbname={$name}",
         $user,
         $password,
         [
@@ -123,7 +105,6 @@ function database(): PDO
     );
     return $connection;
 }
-
 
 function escape(mixed $value): string
 {
@@ -290,10 +271,7 @@ function validate_decision(array $input): array
     if (!in_array($decision, ['approved', 'rejected'], true)) {
         throw new InputError('Pilih setujui atau tolak.');
     }
-    $note = $input['note'] ?? '';
-    if (!is_string($note) || text_length(trim($note)) > 2000) {
-        throw new InputError('Catatan keputusan maksimal 2000 karakter.');
-    }
+    $note = required_text($input['note'] ?? null, 'Catatan pertimbangan hukum', 2000);
     return ['decision' => $decision, 'note' => trim($note)];
 }
 
