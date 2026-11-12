@@ -437,20 +437,6 @@ try {
         $caseNumber = $_GET['case'] ?? '';
         $report = is_string($caseNumber) ? find_report($db, $caseNumber, $user) : null;
     } elseif ($page === 'admin') {
- rizkybranch
-        $reportStats = report_stats($db);
-        $reportCount = $reportStats['total'];
-        $pendingCount = $reportStats['pending'];
-        $reportPageCount = max(1, (int) ceil($reportCount / $reportPageSize));
-        $reportPage = min($reportPage, $reportPageCount);
-        $reports = report_rows(
-            $db,
-            (string) $user['id'],
-            true,
-            $reportPageSize,
-            ($reportPage - 1) * $reportPageSize,
-        );
-
         try {
             $reportFilters = validate_report_filters($_GET);
         } catch (InputError $filterError) {
@@ -458,7 +444,8 @@ try {
         }
         $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
         $reportStatistics = report_statistics($db);
- main
+        $reportCount = $reportStatistics['total'];
+        $pendingCount = $reportStatistics['pending'];
         $announcements = $db->query(
             'SELECT id, title, body, category, is_pinned, is_published,
                     published_at, expires_at, updated_at
@@ -469,8 +456,6 @@ try {
             $announcement['is_published'] = is_checked($announcement['is_published']);
         }
         unset($announcement);
- rizkybranch
-=======
 
         if (isset($_GET['editAnnouncement'])) {
             try {
@@ -491,8 +476,6 @@ try {
                 $error = $editError->getMessage();
             }
         }
-        $pendingCount = $reportStatistics['pending'];
-main
         $announcementCount = count($announcements);
     }
 } catch (InputError $actionError) {
@@ -543,23 +526,9 @@ if (
     && $db instanceof PDO
 ) {
     try {
- rizkybranch
-        $reportStats = report_stats($db);
-        $reportCount = $reportStats['total'];
-        $pendingCount = $reportStats['pending'];
-        $reportPageCount = max(1, (int) ceil($reportCount / $reportPageSize));
-        $reportPage = min($reportPage, $reportPageCount);
-        $reports = report_rows(
-            $db,
-            (string) $user['id'],
-            true,
-            $reportPageSize,
-            ($reportPage - 1) * $reportPageSize,
-        );
-
         $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
         $reportStatistics = report_statistics($db);
- main
+        $reportCount = $reportStatistics['total'];
         $announcements = $db->query(
             'SELECT id, title, body, category, is_pinned, is_published,
                     published_at, expires_at, updated_at
@@ -570,10 +539,7 @@ if (
             $announcement['is_published'] = is_checked($announcement['is_published']);
         }
         unset($announcement);
- rizkybranch
-
         $pendingCount = $reportStatistics['pending'];
- main
         $announcementCount = count($announcements);
         if (($formValues['action'] ?? '') === 'announcement-edit' && isset($formValues['announcementId'])) {
             $statement = $db->prepare(
