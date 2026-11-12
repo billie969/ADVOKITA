@@ -60,6 +60,11 @@
           </span>
         </div>
 
+        <!-- Tombol Kembali ke Riwayat -->
+        <a href="?page=history" style="display:inline-block; margin-bottom:15px; text-decoration:none; color:#4F46E5; font-weight:600;">
+          &larr; Kembali ke Riwayat
+        </a>
+
         <!-- Indikator Tahapan Status Pengaduan -->
         <?php
           $currentStatus = $report['status'];
