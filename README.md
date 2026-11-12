@@ -44,8 +44,10 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
   - Mengimplementasikan alur moderasi laporan: peninjauan laporan pending, pengisian catatan pertimbangan hukum, dan pembaruan status laporan (Disetujui/Ditolak).
   - Mengembangkan sistem CRUD publikasi pengumuman informasi kampus untuk ditampilkan pada beranda mahasiswa.
 - **Berkas yang Dibuat / Dikelola:**
-  - `templates/pages/admin.php` *(Antarmuka dashboard admin, tabel rekap laporan, modal keputusan, form pengumuman)*
-  - `public/index.php` *(Controller logika POST action: `decision`, `announcement-create`, `announcement-toggle`, `announcement-delete`)*
+  - `templates/pages/admin.php` *(Panel moderasi laporan, riwayat audit keputusan, dan pengelolaan pengumuman)*
+  - `public/index.php` *(Controller POST action `decision`, `announcement-create`, `announcement-edit`, `announcement-toggle`, dan `announcement-delete`; penyimpanan keputusan beserta log audit)*
+  - `app/bootstrap.php` *(Validasi keputusan dan pemuatan riwayat audit untuk panel admin)*
+  - `database/schema.sql` dan `database/migrations/20261112_report_decision_audit.sql` *(Struktur tabel log keputusan dan migrasi data keputusan yang sudah ada)*
 
 ---
 
