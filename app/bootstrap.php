@@ -99,7 +99,7 @@ function database(): PDO
     if ($sslmode === false || $sslmode === '') {
         $sslmode = $isLocalHost ? '' : 'require';
     }
-    if (!in_array($sslmode, ['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'], true)) {
+    if ($sslmode !== '' && !in_array($sslmode, ['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'], true)) {
         throw new RuntimeException('PGSSLMODE tidak valid.');
     }
     if (!$isLocalHost && in_array($sslmode, ['disable', 'allow', 'prefer'], true)) {
