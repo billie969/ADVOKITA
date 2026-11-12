@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 const APP_ROOT = __DIR__ . '/..';
-const UPLOAD_DIRECTORY = APP_ROOT . '/storage/uploads';
+$defaultUploadDirectory = (getenv('VERCEL') !== false || !empty($_ENV['VERCEL']))
+    ? sys_get_temp_dir() . '/advokita_uploads'
+    : APP_ROOT . '/storage/uploads';
+define('UPLOAD_DIRECTORY', getenv('UPLOAD_DIRECTORY') ?: $defaultUploadDirectory);
 const REPORT_CATEGORIES = [
     'UKT & Finansial',
     'Kekerasan & PPKS',
@@ -36,7 +39,8 @@ foreach ([APP_ROOT . '/.env'] as $environmentFile) {
     }
 }
 
-$isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off';
+$isSecure = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== '' && $_SERVER['HTTPS'] !== 'off')
+    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
 session_name('advokita_sid');
 session_set_cookie_params([
     'lifetime' => 8 * 60 * 60,
@@ -85,11 +89,17 @@ function database(): PDO
     $user = getenv('PGUSER') ?: 'advokita_app';
     $password = getenv('PGPASSWORD');
     if ($password === false || $password === '') {
-        throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi lokal.');
+        throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi database.');
+    }
+
+    $sslmode = getenv('PGSSLMODE') ?: ($host !== '127.0.0.1' && $host !== 'localhost' ? 'require' : '');
+    $dsn = "pgsql:host={$host};port={$port};dbname={$name}";
+    if ($sslmode !== '') {
+        $dsn .= ";sslmode={$sslmode}";
     }
 
     $connection = new PDO(
-        "pgsql:host={$host};port={$port};dbname={$name}",
+        $dsn,
         $user,
         $password,
         [

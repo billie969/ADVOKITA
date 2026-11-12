@@ -57,7 +57,7 @@ p {
 .auth-page {
   position: relative;
   isolation: isolate;
-  background: #620008 url('/assets/1fdc9.png') center / cover fixed;
+  background: #620008 url('/assets/1fdc9.png') center / cover no-repeat fixed !important;
 }
 
 .auth-page::before {
@@ -749,7 +749,7 @@ p {
     left: 0;
     z-index: 1030;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     height: 62px;
     padding: 0 6px;
     border-top: 1px solid var(--line);
