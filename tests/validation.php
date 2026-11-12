@@ -88,6 +88,18 @@ $announcement = validate_announcement([
 ]);
 expect($announcement['isPublished'], 'Status publikasi harus dikonversi dari checkbox.');
 expect(
+    !validate_announcement(['title' => 'Draf', 'body' => 'Informasi layanan.'])['isPublished'],
+    'Checkbox yang tidak dipilih harus menghasilkan status draf.',
+);
+expect_error(
+    static fn () => validate_announcement([
+        'title' => 'Pengumuman',
+        'body' => 'Informasi layanan.',
+        'isPublished' => ['on'],
+    ]),
+    'Nilai checkbox publikasi yang bukan string on harus ditolak.',
+);
+expect(
     validate_decision(['decision' => 'approved', 'note' => 'Sudah ditinjau.'])['decision'] === 'approved',
     'Keputusan admin yang didukung harus diterima.',
 );

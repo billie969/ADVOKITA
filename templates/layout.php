@@ -21,27 +21,36 @@
     <?php if (!in_array($page, ['login', 'register'], true)): ?>
       <header class="site-header bg-white border-bottom sticky-top">
         <div class="container d-flex align-items-center h-100">
-          <a class="site-brand text-decoration-none" href="<?= escape(url($user['role'] === 'admin' ? 'admin' : 'dashboard')) ?>">
+          <a class="site-brand text-decoration-none" href="<?= escape(url($user === null ? 'about-profile' : ($user['role'] === 'admin' ? 'admin' : 'dashboard'))) ?>">
             <span class="brand-icon"><i class="bi bi-bank" aria-hidden="true"></i></span>
-            <span><b>ADVOKITA</b><small><?= $user['role'] === 'admin' ? 'Panel Administrasi' : 'Legal Aid System' ?></small></span>
+            <span><b>ADVOKITA</b><small><?= $user !== null && $user['role'] === 'admin' ? 'Panel Administrasi' : 'Legal Aid System' ?></small></span>
           </a>
-          <?php if ($user['role'] === 'user'): ?>
+          <?php if ($user === null): ?>
+            <nav class="main-nav ms-lg-5" aria-label="Navigasi utama">
+              <a class="<?= in_array($page, $aboutPages, true) ? 'active' : '' ?>" href="<?= escape(url('about-profile')) ?>"><i class="bi bi-info-circle" aria-hidden="true"></i><span>Tentang Kami</span></a>
+            </nav>
+          <?php elseif ($user['role'] === 'user'): ?>
             <nav class="main-nav ms-lg-5" aria-label="Navigasi utama">
               <a class="<?= $page === 'dashboard' ? 'active' : '' ?>" href="<?= escape(url('dashboard')) ?>"><i class="bi bi-house" aria-hidden="true"></i><span>Beranda</span></a>
               <a class="<?= $page === 'report' ? 'active' : '' ?>" href="<?= escape(url('report')) ?>"><i class="bi bi-plus-circle" aria-hidden="true"></i><span>Pengaduan</span></a>
               <a class="<?= in_array($page, ['history', 'detail'], true) ? 'active' : '' ?>" href="<?= escape(url('history')) ?>"><i class="bi bi-clock-history" aria-hidden="true"></i><span>Riwayat</span></a>
+              <a class="<?= in_array($page, $aboutPages, true) ? 'active' : '' ?>" href="<?= escape(url('about-profile')) ?>"><i class="bi bi-info-circle" aria-hidden="true"></i><span>Tentang Kami</span></a>
             </nav>
           <?php endif; ?>
           <div class="d-flex align-items-center gap-2 ms-auto">
-            <div class="user-info d-none d-md-flex">
-              <span class="avatar"><?= escape(strtoupper(substr($user['fullName'], 0, 1))) ?></span>
-              <span><b><?= escape($user['fullName']) ?></b><small><?= $user['role'] === 'admin' ? 'Admin' : 'Mahasiswa' ?></small></span>
-            </div>
-            <form method="post" action="/index.php">
-              <?php csrf_input(); ?>
-              <input type="hidden" name="action" value="logout">
-              <button class="btn btn-outline-danger btn-sm" type="submit"><i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Keluar</button>
-            </form>
+            <?php if ($user !== null): ?>
+              <div class="user-info d-none d-md-flex">
+                <span class="avatar"><?= escape(strtoupper(substr($user['fullName'], 0, 1))) ?></span>
+                <span><b><?= escape($user['fullName']) ?></b><small><?= $user['role'] === 'admin' ? 'Admin' : 'Mahasiswa' ?></small></span>
+              </div>
+              <form method="post" action="/index.php">
+                <?php csrf_input(); ?>
+                <input type="hidden" name="action" value="logout">
+                <button class="btn btn-outline-danger btn-sm" type="submit"><i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Keluar</button>
+              </form>
+            <?php else: ?>
+              <a class="btn btn-danger btn-sm" href="<?= escape(url('login')) ?>"><i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i> Masuk</a>
+            <?php endif; ?>
           </div>
         </div>
       </header>
@@ -66,11 +75,12 @@
           <b>ADVOKITA</b><span>Lembaga Bantuan Hukum Kampus</span>
         </div>
       </footer>
-      <?php if ($user['role'] === 'user'): ?>
+      <?php if ($user !== null && $user['role'] === 'user'): ?>
         <nav class="main-nav mobile-nav" aria-label="Navigasi seluler">
           <a class="<?= $page === 'dashboard' ? 'active' : '' ?>" href="<?= escape(url('dashboard')) ?>"><i class="bi bi-house" aria-hidden="true"></i><span>Beranda</span></a>
           <a class="<?= $page === 'report' ? 'active' : '' ?>" href="<?= escape(url('report')) ?>"><i class="bi bi-plus-circle" aria-hidden="true"></i><span>Pengaduan</span></a>
           <a class="<?= in_array($page, ['history', 'detail'], true) ? 'active' : '' ?>" href="<?= escape(url('history')) ?>"><i class="bi bi-clock-history" aria-hidden="true"></i><span>Riwayat</span></a>
+          <a class="<?= in_array($page, $aboutPages, true) ? 'active' : '' ?>" href="<?= escape(url('about-profile')) ?>"><i class="bi bi-info-circle" aria-hidden="true"></i><span>Tentang</span></a>
         </nav>
       <?php endif; ?>
     <?php endif; ?>

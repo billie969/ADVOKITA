@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 const APP_ROOT = __DIR__ . '/..';
-const UPLOAD_DIRECTORY = APP_ROOT . '/storage/uploads';
+$defaultUploadDirectory = (getenv('VERCEL') !== false || !empty($_ENV['VERCEL']))
+    ? sys_get_temp_dir() . '/advokita_uploads'
+    : APP_ROOT . '/storage/uploads';
+define('UPLOAD_DIRECTORY', getenv('UPLOAD_DIRECTORY') ?: $defaultUploadDirectory);
 const REPORT_CATEGORIES = [
     'UKT & Finansial',
     'Kekerasan & PPKS',
@@ -11,7 +14,7 @@ const REPORT_CATEGORIES = [
     'Lainnya',
 ];
 
-foreach ([APP_ROOT . '/.env', APP_ROOT . '/.env.example'] as $environmentFile) {
+foreach ([APP_ROOT . '/.env'] as $environmentFile) {
     if (!is_file($environmentFile)) {
         continue;
     }
@@ -46,6 +49,8 @@ session_set_cookie_params([
     'samesite' => 'Lax',
 ]);
 ini_set('session.use_strict_mode', '1');
+ini_set('session.use_only_cookies', '1');
+ini_set('session.use_trans_sid', '0');
 ini_set('session.gc_maxlifetime', (string) (8 * 60 * 60));
 session_start();
 
@@ -250,7 +255,14 @@ function validate_announcement(array $input): array
 {
     $title = required_text($input['title'] ?? null, 'Judul pengumuman', 120);
     $body = required_text($input['body'] ?? null, 'Isi pengumuman', 3000);
-    return ['title' => $title, 'body' => $body, 'isPublished' => isset($input['isPublished'])];
+    $isPublished = false;
+    if (array_key_exists('isPublished', $input)) {
+        if ($input['isPublished'] !== 'on') {
+            throw new InputError('Status publikasi tidak valid.');
+        }
+        $isPublished = true;
+    }
+    return ['title' => $title, 'body' => $body, 'isPublished' => $isPublished];
 }
 
 function validate_decision(array $input): array
