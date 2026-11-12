@@ -1,4 +1,4 @@
-﻿<style>
+<style>
 /* =====================================
    ADVOKITA - PROFESSIONAL DESIGN
 ===================================== */
@@ -1262,3 +1262,72 @@
   }
 }
 </style>
+
+/* -------------------------------------------------
+   Service section layout (grid kartu layanan) and mobile fix
+   ------------------------------------------------- */
+@media (max-width: 768px) {
+  .advokita-page .dashboard-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+.adv-service-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.adv-service-card {
+  flex: 1 1 280px;
+  max-width: 340px;
+  background: var(--adv-bg);
+  border: 1px solid var(--adv-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+  position: relative;
+}
+
+.adv-service-icon {
+  font-size: 2.2rem;
+  color: var(--adv-red);
+  margin-bottom: .8rem;
+}
+
+.adv-service-number {
+  display: block;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--adv-muted);
+  margin-bottom: .4rem;
+}
+
+.adv-service-card h3 {
+  font-size: 1.25rem;
+  margin: .4rem 0 .6rem;
+  color: var(--adv-navy);
+}
+
+.adv-service-card p {
+  font-size: .94rem;
+  line-height: 1.6;
+  color: var(--adv-text);
+}
+
+.adv-service-arrow {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  font-size: 1.2rem;
+  color: var(--adv-red);
+}
+
+@media (max-width: 576px) {
+  .adv-service-layout {
+    justify-content: stretch;
+  }
+}
