@@ -1184,6 +1184,7 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
 </main>
 
 <script>
+// KILAS INFO (NEWS TICKER)
 (function() {
   var list = document.getElementById('tickerList');
   if (!list) return;
@@ -1192,12 +1193,16 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
 
   var current = 0;
   var total = items.length;
-  var itemHeight = 24;
   var timer = null;
+
+  function getItemHeight() {
+    return items[0] ? items[0].offsetHeight || 24 : 24;
+  }
 
   function moveTo(index) {
     current = (index + total) % total;
-    list.style.transform = 'translateY(-' + (current * itemHeight) + 'px)';
+    var h = getItemHeight();
+    list.style.transform = 'translateY(-' + (current * h) + 'px)';
   }
 
   function start() {
@@ -1222,8 +1227,20 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
 
   var prev = document.getElementById('tickerPrev');
   var next = document.getElementById('tickerNext');
-  if (prev) prev.addEventListener('click', function() { moveTo(current - 1); });
-  if (next) next.addEventListener('click', function() { moveTo(current + 1); });
+  if (prev) {
+    prev.addEventListener('click', function(e) {
+      e.preventDefault();
+      moveTo(current - 1);
+      start();
+    });
+  }
+  if (next) {
+    next.addEventListener('click', function(e) {
+      e.preventDefault();
+      moveTo(current + 1);
+      start();
+    });
+  }
 
   start();
 })();
@@ -1239,39 +1256,63 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
   var nextBtn = document.getElementById('announcementNext');
   var dotsWrap = document.getElementById('announcementDots');
 
-  var slideWidth = function() {
-    return slides[0].getBoundingClientRect().width + 16;
-  };
+  function getStepWidth() {
+    var first = slides[0];
+    if (!first) return 300;
+    var style = window.getComputedStyle(track);
+    var gap = parseFloat(style.columnGap || style.gap) || 16;
+    return first.offsetWidth + gap;
+  }
+
+  function updateDots() {
+    if (!dotsWrap) return;
+    var step = getStepWidth();
+    var activeIndex = Math.round(track.scrollLeft / step);
+    var dots = dotsWrap.querySelectorAll('.announcement-dot');
+    dots.forEach(function(d, idx) {
+      d.classList.toggle('active', idx === activeIndex);
+    });
+  }
 
   if (dotsWrap && slides.length > 2) {
+    dotsWrap.innerHTML = '';
     slides.forEach(function(_, i) {
       var dot = document.createElement('button');
       dot.type = 'button';
       dot.className = 'announcement-dot' + (i === 0 ? ' active' : '');
       dot.setAttribute('aria-label', 'Ke slide ' + (i + 1));
-      dot.addEventListener('click', function() {
-        track.scrollTo({ left: i * slideWidth(), behavior: 'smooth' });
+      dot.addEventListener('click', function(e) {
+        e.preventDefault();
+        track.scrollTo({ left: i * getStepWidth(), behavior: 'smooth' });
       });
       dotsWrap.appendChild(dot);
     });
 
-    track.addEventListener('scroll', function() {
-      var activeIndex = Math.round(track.scrollLeft / slideWidth());
-      var dots = dotsWrap.querySelectorAll('.announcement-dot');
-      dots.forEach(function(d, idx) {
-        d.classList.toggle('active', idx === activeIndex);
+    track.addEventListener('scroll', updateDots, { passive: true });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var step = getStepWidth();
+      track.scrollTo({
+        left: Math.max(0, track.scrollLeft - step),
+        behavior: 'smooth'
       });
     });
   }
 
-  if (prevBtn) {
-    prevBtn.addEventListener('click', function() {
-      track.scrollBy({ left: -slideWidth(), behavior: 'smooth' });
-    });
-  }
   if (nextBtn) {
-    nextBtn.addEventListener('click', function() {
-      track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
+    nextBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var step = getStepWidth();
+      var maxScroll = track.scrollWidth - track.clientWidth;
+      var target = track.scrollLeft + step;
+      if (target >= maxScroll - 5) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollTo({ left: target, behavior: 'smooth' });
+      }
     });
   }
 })();
