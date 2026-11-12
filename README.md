@@ -55,7 +55,7 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
 - **Fokus:** *Backend & Frontend: Modul Formulir Pengaduan & Penanganan Berkas Bukti*
 - **Rincian Pekerjaan:**
   - Merancang antarmuka formulir pengaduan hukum dengan input dinamis (kategori kasus, tanggal insiden, kronologi kejadian, dan saklar privasi anonim).
-  - Mengembangkan logika pemrosesan upload lampiran bukti: validasi tipe konten MIME di sisi server (PDF, JPG, PNG), pembatasan ukuran berkas (maksimal 10 MB), dan penyimpanan bukti terenkripsi secara privat di luar document root.
+  - Mengembangkan logika pemrosesan upload lampiran bukti: validasi tipe konten MIME di sisi server (PDF, JPG, PNG), pembatasan ukuran berkas (maksimal 10 MB), penyimpanan secara privat di luar document root, dan kontrol akses unduhan di server.
 - **Berkas yang Dibuat / Dikelola:**
   - `templates/pages/report.php` *(Antarmuka formulir pengaduan, pemilihan kategori, kronologi, saklar anonim)*
   - `app/bootstrap.php` *(Validasi data laporan melalui `validate_report()`)*
