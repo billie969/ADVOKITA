@@ -65,18 +65,13 @@ $filters = $filters ?? ['case' => '', 'status' => ''];
 
     <?php if ($reports === []): ?>
 
-      <section class="empty-state" aria-labelledby="historyEmptyTitle">
-        <span class="empty-state-icon">
-          <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
-        </span>
-
-        <h2 id="historyEmptyTitle">Belum ada riwayat pengaduan</h2>
-        <p>Setelah Anda mengirim laporan, status dan tindak lanjutnya akan muncul di sini.</p>
-
-        <a class="btn btn-danger" href="<?= escape(url('report')) ?>">
-          <i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Buat Pengaduan
-        </a>
-      </section>
+      <!-- Tampilan ketika belum ada laporan -->
+      <div style="text-align:center; padding:30px; color:#6B7280;">
+        <div style="font-size:32px;">📂</div>
+        <p>Belum ada laporan.</p>
+        <p style="font-size:13px;">Buat laporan pertama kamu di menu Dashboard, ya!</p>
+        <a href="?page=dashboard" style="display:inline-block; margin-top:10px; padding:8px 14px; background:#4F46E5; color:white; border-radius:8px; text-decoration:none;">Buat Laporan</a>
+      </div>
 
     <?php else: ?>
 
