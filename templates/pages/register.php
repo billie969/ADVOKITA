@@ -13,7 +13,7 @@
 
       <div class="rg-eyebrow">Mulai bergabung</div>
       <h2 class="rg-title">Buat Akun Baru</h2>
-      <p class="rg-lead">Daftar menggunakan data mahasiswa untuk mengajukan laporan di ADVOKITA.</p>
+      <p class="rg-lead">Daftar menggunakan data Anda untuk mengajukan laporan di ADVOKITA.</p>
 
       <div class="rg-field" style="margin-top:0">
         <label class="rg-label" for="registerName">Nama lengkap <b>*</b></label>
@@ -24,12 +24,25 @@
       </div>
 
       <div class="rg-field">
-        <label class="rg-label" for="registerNim">NPM <b>*</b></label>
+        <label class="rg-label" for="registerUserType">Tipe Pengguna <b>*</b></label>
         <div class="rg-input">
-          <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M15 10h3M15 14h3"/></svg>
-          <input id="registerNim" name="nim" required inputmode="numeric" pattern="[0-9]{4,20}" autocomplete="username" placeholder="Masukkan NPM Anda" value="<?= escape($formValues['nim'] ?? '') ?>">
+          <select id="registerUserType" name="user_type" required>
+            <option value="" disabled selected>Pilih tipe pengguna</option>
+            <option value="mahasiswa">Mahasiswa</option>
+            <option value="dosen">Dosen</option>
+            <option value="civitas">Civitas Fakultas</option>
+          </select>
         </div>
       </div>
+
+      <div class="rg-field">
+        <label class="rg-label" for="registerNim">NPM/NIP <b>*</b></label>
+        <div class="rg-input">
+          <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M15 10h3M15 14h3"/></svg>
+          <input id="registerNim" name="nim" required inputmode="numeric" pattern="[0-9]{4,20}" autocomplete="username" placeholder="Masukkan NPM/NIP Anda" value="<?= escape($formValues['nim'] ?? '') ?>">
+        </div>
+      </div>
+
       <div class="mb-3">
         <label class="form-label" for="registerPassword">Kata sandi <span class="text-danger">*</span></label>
         <input class="form-control" type="password" id="registerPassword" name="password" minlength="8" maxlength="72" autocomplete="new-password" required placeholder="Minimal 8 karakter">
