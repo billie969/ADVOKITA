@@ -384,6 +384,114 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
   border-color: #dbe2eb;
 }
 
+/* NEWS TICKER / RUNNING ANNOUNCEMENT */
+.news-ticker-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--adv-border);
+  border-left: 4px solid var(--adv-red);
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 22px;
+  box-shadow: 0 2px 8px rgba(36, 52, 77, 0.04);
+  gap: 12px;
+  overflow: hidden;
+}
+.news-ticker-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--adv-red), #cf3142);
+  color: white;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(180, 35, 50, 0.25);
+}
+.news-ticker-badge .ticker-pulse {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  animation: tickerPulse 1.4s infinite ease-in-out;
+}
+@keyframes tickerPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(.7); }
+}
+.news-ticker-track-wrap {
+  flex: 1;
+  height: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.news-ticker-list {
+  position: absolute;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: transform .45s cubic-bezier(.4, 0, .2, 1);
+}
+.news-ticker-item {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.news-ticker-link {
+  color: var(--adv-navy);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color .15s ease;
+}
+.news-ticker-link:hover {
+  color: var(--adv-red);
+}
+.news-ticker-date {
+  font-size: 11px;
+  color: var(--adv-muted);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.news-ticker-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.ticker-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--adv-border);
+  background: var(--adv-soft);
+  color: var(--adv-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  transition: all .15s ease;
+}
+.ticker-btn:hover {
+  background: white;
+  color: var(--adv-red);
+  border-color: var(--adv-red-accent);
+}
+
 .announcement-header {
   display: flex;
   justify-content: space-between;
@@ -758,6 +866,33 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
     </div>
   </div>
 
+  <?php if (!empty($announcements)): ?>
+    <!-- RUNNING NEWS TICKER -->
+    <div class="news-ticker-bar" id="newsTickerBar">
+      <div class="news-ticker-badge">
+        <span class="ticker-pulse"></span>
+        <i class="bi bi-megaphone-fill"></i>
+        <span>KILAS INFO</span>
+      </div>
+      <div class="news-ticker-track-wrap" id="tickerWrap">
+        <ul class="news-ticker-list" id="tickerList">
+          <?php foreach ($announcements as $idx => $ann): ?>
+            <li class="news-ticker-item">
+              <span class="news-ticker-date"><i class="bi bi-calendar3 me-1"></i><?= escape(format_date($ann['published_at'])) ?></span>
+              <a href="#announcement-<?= (int) ($ann['id'] ?? $idx) ?>" class="news-ticker-link">
+                <?= escape($ann['title']) ?> &mdash; <span class="text-muted fw-normal"><?= escape(mb_strimwidth($ann['body'], 0, 75, '...')) ?></span>
+              </a>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+      <div class="news-ticker-controls">
+        <button type="button" class="ticker-btn" id="tickerPrev" aria-label="Sebelumnya"><i class="bi bi-chevron-up"></i></button>
+        <button type="button" class="ticker-btn" id="tickerNext" aria-label="Berikutnya"><i class="bi bi-chevron-down"></i></button>
+      </div>
+    </div>
+  <?php endif; ?>
+
   <!-- STATS OVERVIEW -->
   <section class="dashboard-stats-grid" aria-label="Statistik Pengaduan">
     <div class="dash-stat-card">
@@ -826,7 +961,7 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
         <div class="row g-3">
           <?php foreach ($announcements as $announcement): ?>
             <div class="col-12 col-lg-6">
-              <article class="announcement-item">
+              <article class="announcement-item" id="announcement-<?= (int) ($announcement['id'] ?? $loopIndex ?? 0) ?>">
                 <div class="announcement-header">
                   <span class="announcement-tag">
                     <i class="bi bi-info-circle-fill me-1"></i> Informasi Resmi
@@ -950,3 +1085,49 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
   </section>
 
 </main>
+
+<script>
+(function() {
+  var list = document.getElementById('tickerList');
+  if (!list) return;
+  var items = list.querySelectorAll('.news-ticker-item');
+  if (items.length <= 1) return;
+
+  var current = 0;
+  var total = items.length;
+  var itemHeight = 24;
+  var timer = null;
+
+  function moveTo(index) {
+    current = (index + total) % total;
+    list.style.transform = 'translateY(-' + (current * itemHeight) + 'px)';
+  }
+
+  function start() {
+    stop();
+    timer = setInterval(function() {
+      moveTo(current + 1);
+    }, 4000);
+  }
+
+  function stop() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  }
+
+  var wrap = document.getElementById('newsTickerBar');
+  if (wrap) {
+    wrap.addEventListener('mouseenter', stop);
+    wrap.addEventListener('mouseleave', start);
+  }
+
+  var prev = document.getElementById('tickerPrev');
+  var next = document.getElementById('tickerNext');
+  if (prev) prev.addEventListener('click', function() { moveTo(current - 1); });
+  if (next) next.addEventListener('click', function() { moveTo(current + 1); });
+
+  start();
+})();
+</script>
