@@ -3,7 +3,7 @@
 
 ADVOKITA adalah portal pengaduan dan bantuan hukum mahasiswa berbasis web. Sistem ini memungkinkan mahasiswa membuat akun, mengajukan laporan secara transparan maupun anonim, mengunggah bukti dokumen/foto, dan memantau status perkembangan penanganan kasus. Di sisi pengelola, admin kampus dapat meninjau kronologi laporan, memberikan catatan keputusan (menyetujui/menolak), serta mempublikasikan pengumuman resmi.
 
-Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**, dan antarmuka **HTML + Bootstrap 5 CSS-only (100% tanpa JavaScript)** sesuai standar keamanan dan aksesibilitas kampus.
+Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**, dan antarmuka **HTML + Bootstrap 5**. JavaScript ringan dipakai untuk dialog moderasi dan konfirmasi tindakan di panel admin; validasi, otorisasi, dan perubahan data tetap ditangani di server.
 
 ---
 
@@ -79,7 +79,7 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
 - **Rincian Pekerjaan:**
   - Merancang kerangka layout aplikasi bersama (header desktop responsif, mobile bottom navigation bar, alert notifikasi).
   - Mengimplementasikan seluruh modul autentikasi pengguna: halaman pendaftaran akun mahasiswa, halaman login, hashing kata sandi (`bcrypt`), pembatasan percobaan login (rate limiting), dan rotasi sesi.
-  - Mengembangkan sistem desain visual CSS murni (warna crimson tema kampus, tipografi, card elevation, dan formulir tanpa ketergantungan JavaScript).
+  - Mengembangkan sistem desain visual CSS (warna crimson tema kampus, tipografi, card elevation, dan formulir autentikasi tanpa ketergantungan JavaScript).
 - **Berkas yang Dibuat / Dikelola:**
   - `templates/layout.php` *(Kerangka HTML bersama, navbar desktop, bottom navigation mobile, container alert flash message)*
   - `templates/pages/login.php` & `templates/pages/register.php` *(Antarmuka login dan registrasi mahasiswa)*
@@ -145,8 +145,8 @@ Server web harus memakai `public/` sebagai document root. Kredensial database di
 - **Pengaduan:** judul, kategori, tanggal kejadian, kronologi, pilihan anonim, dan lampiran opsional.
 - **Lampiran:** hanya PDF/JPG/PNG hingga 10 MB. PHP memeriksa MIME dari isi berkas; unduhan hanya tersedia bagi pemilik laporan atau admin.
 - **Pemantauan laporan:** dashboard, riwayat, detail, status, dan catatan keputusan.
-- **Administrasi:** admin menerima laporan, menyetujui/menolak laporan pending dengan catatan, dan mengelola pengumuman.
-- **Tanpa JavaScript:** setiap aksi dikirim melalui form HTML biasa dan ditangani di server. Navigasi halaman, validasi, dan pembaruan konten tidak membutuhkan skrip browser.
+- **Administrasi:** admin menerima laporan, menyetujui/menolak laporan pending dengan catatan, melihat riwayat audit keputusan, dan mengelola pengumuman.
+- **JavaScript terbatas pada UI:** dialog moderasi dan konfirmasi tindakan memakai skrip browser; seluruh validasi, otorisasi, dan pemrosesan data tetap dilakukan di server melalui form.
 
 ---
 
@@ -184,7 +184,7 @@ Agar batas lampiran aplikasi 10 MB dapat dipenuhi, konfigurasi PHP/web server ha
    ```bash
    php bin/setup-database.php
    ```
-  Skrip ini menerapkan `database/schema.sql` dan migration di `database/migrations/` secara berurutan. Migration metadata pengumuman menambah kategori, pin, dan tanggal berakhir. Tinjau migration sebelum menjalankannya pada database produksi.
+  Skrip ini menerapkan `database/schema.sql` dan migration di `database/migrations/` secara berurutan. Migration metadata pengumuman menambah kategori, pin, dan tanggal berakhir. Migration audit keputusan membuat tabel riwayat dan menyalin keputusan terakhir dari laporan yang sudah diproses; perubahan sebelum riwayat ini tersedia tidak dapat dipulihkan. Tinjau migration sebelum menjalankannya pada database produksi.
 5. Buat akun Admin pertama:
    ```bash
    php bin/create-admin.php
@@ -214,7 +214,7 @@ php tests/validation.php
 php -l public/index.php
 ```
 
-Uji alur secara manual tanpa JavaScript: registrasi/login, pengajuan laporan dengan dan tanpa bukti, akses pemilik terhadap detail/lampiran, moderasi admin, serta pembuatan/publikasi/penghapusan pengumuman.
+Uji alur secara manual: registrasi/login, pengajuan laporan dengan dan tanpa bukti, akses pemilik terhadap detail/lampiran, moderasi admin dan riwayat keputusannya, serta pembuatan/publikasi/penghapusan pengumuman.
 
 ---
 
@@ -226,4 +226,4 @@ Uji alur secara manual tanpa JavaScript: registrasi/login, pengajuan laporan den
 - Periksa otorisasi dan kepemilikan laporan pada tiap operasi detail/unduh lampiran.
 - Jangan menyajikan isi `storage/` sebagai berkas statis publik.
 - Jangan menaruh rahasia di kode, dokumentasi, atau repositori. File `.env` tidak boleh dibagikan atau di-commit.
-- Jangan menambahkan JavaScript, Node.js, npm/pnpm, Vite, atau dependensi yang memerlukan JavaScript.
+- Gunakan JavaScript hanya untuk interaksi antarmuka yang diperlukan; jangan memindahkan validasi atau otorisasi dari server ke browser. Jangan menambahkan Node.js, npm/pnpm, Vite, atau dependensi build JavaScript.

@@ -281,20 +281,44 @@ try {
                 $user = require_user('admin');
                 $decision = validate_decision($_POST);
                 $reportId = positive_id($_POST['reportId'] ?? null, 'ID laporan');
-                $statement = $db->prepare(
-                    "UPDATE reports
-                     SET status = :status, decision_note = NULLIF(:note, ''),
-                         decided_by = :decided_by, decided_at = NOW()
-                     WHERE id = :id AND status = 'pending'",
-                );
-                $statement->execute([
-                    'status' => $decision['decision'],
-                    'note' => $decision['note'],
-                    'decided_by' => (string) $user['id'],
-                    'id' => $reportId,
-                ]);
-                if ($statement->rowCount() !== 1) {
-                    throw new InputError('Laporan tidak ditemukan atau sudah diproses.', 409);
+                $db->beginTransaction();
+                try {
+                    $statement = $db->prepare(
+                        "UPDATE reports
+                         SET status = :status, decision_note = :note,
+                             decided_by = :decided_by, decided_at = NOW()
+                         WHERE id = :id AND status = 'pending'
+                         RETURNING decided_at",
+                    );
+                    $statement->execute([
+                        'status' => $decision['decision'],
+                        'note' => $decision['note'],
+                        'decided_by' => (string) $user['id'],
+                        'id' => $reportId,
+                    ]);
+                    $decidedAt = $statement->fetchColumn();
+                    if ($decidedAt === false) {
+                        throw new InputError('Laporan tidak ditemukan atau sudah diproses.', 409);
+                    }
+
+                    $statement = $db->prepare(
+                        'INSERT INTO report_decision_logs
+                         (report_id, decision, decision_note, decided_by, decided_at)
+                         VALUES (:report_id, :decision, :decision_note, :decided_by, :decided_at)',
+                    );
+                    $statement->execute([
+                        'report_id' => $reportId,
+                        'decision' => $decision['decision'],
+                        'decision_note' => $decision['note'],
+                        'decided_by' => (string) $user['id'],
+                        'decided_at' => $decidedAt,
+                    ]);
+                    $db->commit();
+                } catch (Throwable $decisionError) {
+                    if ($db->inTransaction()) {
+                        $db->rollBack();
+                    }
+                    throw $decisionError;
                 }
                 flash('success', 'Keputusan laporan berhasil disimpan.');
                 redirect('admin');

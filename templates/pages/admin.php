@@ -100,7 +100,19 @@ if (is_string($announcementExpiry) && $announcementExpiry !== '') {
               <?php endif; ?>
             </section>
             <?php if (!$isPending): ?>
-              <section class="moderation-saved-note"><h3>Riwayat keputusan</h3><p><strong><?= escape(status_label($reportItem['status'])) ?></strong><?php if ($reportItem['decided_by_name'] !== null): ?> oleh <?= escape($reportItem['decided_by_name']) ?><?php endif; ?><?php if ($reportItem['decided_at'] !== null): ?> · <?= escape(format_datetime($reportItem['decided_at'])) ?><?php endif; ?></p><?php if ($reportItem['decision_note'] !== null && $reportItem['decision_note'] !== ''): ?><p><?= escape($reportItem['decision_note']) ?></p><?php endif; ?></section>
+              <section class="moderation-saved-note">
+                <h3>Riwayat keputusan</h3>
+                <ol>
+                  <?php foreach ($reportItem['decision_history'] as $decisionRecord): ?>
+                    <li>
+                      <p><strong><?= escape(status_label($decisionRecord['decision'])) ?></strong> oleh <?= escape($decisionRecord['decided_by_name']) ?> · <?= escape(format_datetime($decisionRecord['decided_at'])) ?></p>
+                      <?php if ($decisionRecord['decision_note'] !== ''): ?>
+                        <p><?= escape($decisionRecord['decision_note']) ?></p>
+                      <?php endif; ?>
+                    </li>
+                  <?php endforeach; ?>
+                </ol>
+              </section>
             <?php endif; ?>
             <?php if ($isPending): ?>
               <form class="moderation-decision-form" method="post" action="<?= escape(url('admin')) ?>" data-report-case="<?= escape($reportItem['case_number']) ?>">

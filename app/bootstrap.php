@@ -455,10 +455,26 @@ function report_rows(PDO $db, string $userId, bool $admin = false, array $filter
     $statement->execute($parameters);
     $reports = $statement->fetchAll();
     foreach ($reports as &$report) {
+        if ($admin) {
+            $report['decision_history'] = decision_history_rows($db, (string) $report['id']);
+        }
         $report['attachments'] = attachment_rows($db, (string) $report['id']);
     }
     unset($report);
     return $reports;
+}
+
+function decision_history_rows(PDO $db, string $reportId): array
+{
+    $statement = $db->prepare(
+        'SELECT d.decision, d.decision_note, d.decided_at, reviewer.full_name AS decided_by_name
+         FROM report_decision_logs d
+         JOIN users reviewer ON reviewer.id = d.decided_by
+         WHERE d.report_id = :report_id
+         ORDER BY d.decided_at DESC, d.id DESC',
+    );
+    $statement->execute(['report_id' => $reportId]);
+    return $statement->fetchAll();
 }
 
 function report_statistics(PDO $db): array
