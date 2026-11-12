@@ -14,7 +14,7 @@ const REPORT_CATEGORIES = [
     'Lainnya',
 ];
 
-foreach ([APP_ROOT . '/.env', APP_ROOT . '/.env.example'] as $environmentFile) {
+foreach ([APP_ROOT . '/.env'] as $environmentFile) {
     if (!is_file($environmentFile)) {
         continue;
     }
@@ -67,20 +67,20 @@ final class InputError extends RuntimeException
     }
 }
 
+function session_secret(): string
+{
+    $secret = getenv('SESSION_SECRET');
+    if ($secret === false || strlen($secret) < 32) {
+        throw new RuntimeException('SESSION_SECRET harus diatur dengan minimal 32 karakter.');
+    }
+    return $secret;
+}
+
 function database(): PDO
 {
     static $connection;
     if ($connection instanceof PDO) {
         return $connection;
-    }
-
-    function session_secret(): string
-    {
-        $secret = getenv('SESSION_SECRET');
-        if ($secret === false || strlen($secret) < 32) {
-            throw new RuntimeException('SESSION_SECRET harus diatur dengan minimal 32 karakter.');
-        }
-        return $secret;
     }
 
     $host = getenv('PGHOST') ?: '127.0.0.1';
@@ -110,6 +110,7 @@ function database(): PDO
     );
     return $connection;
 }
+
 
 function escape(mixed $value): string
 {
