@@ -29,7 +29,7 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
   - Mengonfigurasi otomatisasi deployment kontainer Docker dan runner environment server.
 - **Berkas yang Dibuat / Dikelola:**
   - `app/bootstrap.php` *(Koneksi database PDO, inisialisasi sesi, proteksi CSRF, helper keamanan)*
-  - `database/schema.sql` *(Struktur tabel users, reports, report_attachments, announcements, auth_attempts)*
+  - `database/schema.sql` *(Struktur tabel users, reports, report_attachments, report_decision_logs, announcements, auth_attempts)*
   - `Dockerfile` & `.dockerignore` *(Konfigurasi kontainer PHP 8.2 Alpine & ekstensi pdo_pgsql)*
   - `composer.json` *(Deklarasi dependensi PHP & platform extensions)*
   - `bin/setup-database.php` & `bin/create-admin.php` *(CLI migrasi tabel & pembuatan akun admin)*
@@ -58,7 +58,8 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
   - Mengembangkan logika pemrosesan upload lampiran bukti: validasi tipe konten MIME di sisi server (PDF, JPG, PNG), pembatasan ukuran berkas (maksimal 10 MB), dan penyimpanan bukti terenkripsi secara privat di luar document root.
 - **Berkas yang Dibuat / Dikelola:**
   - `templates/pages/report.php` *(Antarmuka formulir pengaduan, pemilihan kategori, kronologi, saklar anonim)*
-  - `public/index.php` *(Fungsi validasi `validate_report()`, fungsi pemrosesan berkas `save_uploaded_attachment()`, dan proteksi folder upload)*
+  - `app/bootstrap.php` *(Validasi data laporan melalui `validate_report()`)*
+  - `public/index.php` *(Pemrosesan upload melalui `save_uploaded_attachment()`, pengiriman lampiran melalui `send_attachment()`, dan proteksi folder upload)*
 
 ---
 
@@ -72,7 +73,8 @@ Aplikasi dibangun menggunakan **PHP Native (8.2+)**, **PostgreSQL (PDO_PGSQL)**,
   - `templates/pages/dashboard.php` *(Antarmuka beranda mahasiswa, banner informasi pengaduan, dan feed pengumuman)*
   - `templates/pages/history.php` *(Antarmuka daftar riwayat pengaduan mahasiswa beserta badge status)*
   - `templates/pages/detail.php` *(Antarmuka rincian kronologi laporan, catatan putusan admin, dan daftar bukti)*
-  - `public/index.php` *(Controller query riwayat laporan `report_rows()`, detail kasus `find_report()`, dan fungsi pengiriman berkas `send_attachment()`)*
+  - `app/bootstrap.php` *(Query riwayat laporan `report_rows()` dan detail kasus `find_report()`)*
+  - `public/index.php` *(Rute dashboard, riwayat, detail kasus, dan endpoint pengiriman lampiran `send_attachment()`)*
 
 ---
 
