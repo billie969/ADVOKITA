@@ -47,12 +47,16 @@
 .rg-label b{color:var(--red)}
 .rg-input{position:relative}
 .rg-input>svg.ic{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#8b93a5;pointer-events:none}
-.rg-input input{
+.rg-input input,
+.rg-input select{
   width:100%;height:50px;border:1px solid var(--line);border-radius:12px;background:var(--field);
   padding:0 46px;font:inherit;font-size:14px;color:var(--ink);transition:border-color .15s,box-shadow .15s,background .15s;
 }
+.rg-input select{appearance:none;-webkit-appearance:none;cursor:pointer}
 .rg-input input::placeholder{color:#9aa1b1}
-.rg-input input:focus{outline:none;background:#fff;border-color:var(--red);box-shadow:0 0 0 4px rgba(184,33,47,.12)}
+.rg-input input:focus,
+.rg-input select:focus{outline:none;background:#fff;border-color:var(--red);box-shadow:0 0 0 4px rgba(184,33,47,.12)}
+.rg-select-arrow{position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;color:#8b93a5}
 .rg-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;background:none;border-radius:8px;color:#8b93a5;cursor:pointer;display:grid;place-items:center}
 .rg-eye:hover{color:var(--ink)}
 .rg-eye:focus-visible{outline:2px solid var(--red)}
@@ -110,10 +114,24 @@
       </div>
 
       <div class="rg-field">
-        <label class="rg-label" for="registerNim">NPM <b>*</b></label>
+        <label class="rg-label" for="registerRole">Peran / Status <b>*</b></label>
+        <div class="rg-input">
+          <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <select id="registerRole" name="userRole" required>
+            <option value="" disabled selected>Pilih peran Anda</option>
+            <option value="mahasiswa" <?= (($formValues['userRole'] ?? '') === 'mahasiswa') ? 'selected' : '' ?>>Mahasiswa</option>
+            <option value="dosen" <?= (($formValues['userRole'] ?? '') === 'dosen') ? 'selected' : '' ?>>Dosen</option>
+            <option value="civitas" <?= (($formValues['userRole'] ?? '') === 'civitas') ? 'selected' : '' ?>>Civitas Fakultas</option>
+          </select>
+          <svg class="rg-select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <div class="rg-field">
+        <label class="rg-label" for="registerNim">NPM / NIP <b>*</b></label>
         <div class="rg-input">
           <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M15 10h3M15 14h3"/></svg>
-          <input id="registerNim" name="nim" required inputmode="numeric" pattern="[0-9]{4,20}" autocomplete="username" placeholder="Masukkan NPM Anda" value="<?= escape($formValues['nim'] ?? '') ?>">
+          <input id="registerNim" name="nim" required inputmode="numeric" pattern="[0-9]{4,20}" autocomplete="username" placeholder="Masukkan NPM/NIP Anda" value="<?= escape($formValues['nim'] ?? '') ?>">
         </div>
       </div>
 
