@@ -50,6 +50,8 @@ session_set_cookie_params([
     'samesite' => 'Lax',
 ]);
 ini_set('session.use_strict_mode', '1');
+ini_set('session.use_only_cookies', '1');
+ini_set('session.use_trans_sid', '0');
 ini_set('session.gc_maxlifetime', (string) (8 * 60 * 60));
 session_start();
 
@@ -92,7 +94,18 @@ function database(): PDO
         throw new RuntimeException('PGPASSWORD belum diatur pada konfigurasi database.');
     }
 
-    $sslmode = getenv('PGSSLMODE') ?: ($host !== '127.0.0.1' && $host !== 'localhost' ? 'require' : '');
+    $isLocalHost = in_array(strtolower($host), ['127.0.0.1', 'localhost', '::1'], true);
+    $sslmode = getenv('PGSSLMODE');
+    if ($sslmode === false || $sslmode === '') {
+        $sslmode = $isLocalHost ? '' : 'require';
+    }
+    if (!in_array($sslmode, ['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'], true)) {
+        throw new RuntimeException('PGSSLMODE tidak valid.');
+    }
+    if (!$isLocalHost && in_array($sslmode, ['disable', 'allow', 'prefer'], true)) {
+        throw new RuntimeException('PGSSLMODE harus require, verify-ca, atau verify-full untuk database remote.');
+    }
+
     $dsn = "pgsql:host={$host};port={$port};dbname={$name}";
     if ($sslmode !== '') {
         $dsn .= ";sslmode={$sslmode}";
@@ -261,7 +274,14 @@ function validate_announcement(array $input): array
 {
     $title = required_text($input['title'] ?? null, 'Judul pengumuman', 120);
     $body = required_text($input['body'] ?? null, 'Isi pengumuman', 3000);
-    return ['title' => $title, 'body' => $body, 'isPublished' => isset($input['isPublished'])];
+    $isPublished = false;
+    if (array_key_exists('isPublished', $input)) {
+        if ($input['isPublished'] !== 'on') {
+            throw new InputError('Status publikasi tidak valid.');
+        }
+        $isPublished = true;
+    }
+    return ['title' => $title, 'body' => $body, 'isPublished' => $isPublished];
 }
 
 function validate_decision(array $input): array
