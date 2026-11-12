@@ -28,10 +28,24 @@
     <section class="detail-card">
       <div class="detail-summary">
         <div>
-          <span class="eyebrow"><?= escape($report['case_number']) ?></span>
+          <span class="eyebrow">
+            <?= escape($report['case_number']) ?>
+
+            <!-- Tombol Salin Nomor Kasus -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary ms-2"
+              onclick="navigator.clipboard.writeText(<?= htmlspecialchars(json_encode($report['case_number']), ENT_QUOTES, 'UTF-8') ?>).then(() => { this.innerText = 'Tersalin!'; }).catch(() => { this.innerText = 'Gagal menyalin'; });"
+            >
+              <i class="bi bi-clipboard me-1" aria-hidden="true"></i>
+              Salin Nomor
+            </button>
+          </span>
+
           <h2><?= escape($report['title']) ?></h2>
           <p>Dikirim <?= escape(format_date($report['created_at'])) ?></p>
         </div>
+
         <span class="badge <?= escape(status_class($report['status'])) ?>">
           <?= escape(status_label($report['status'])) ?>
         </span>
