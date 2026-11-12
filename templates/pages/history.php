@@ -92,7 +92,19 @@ $filters = $filters ?? ['case' => '', 'status' => ''];
                 </span>
               </div>
 
-              <span class="badge <?= escape(status_class($reportItem['status'])) ?>">
+              <!-- Badge Status dengan Warna Sesuai Status -->
+              <?php
+                $badgeBg = $reportItem['status'] === 'done'
+                  ? '#D1FAE5'
+                  : ($reportItem['status'] === 'process'
+                    ? '#DBEAFE'
+                    : '#FEF3C7');
+              ?>
+
+              <span
+                class="badge <?= escape(status_class($reportItem['status'])) ?>"
+                style="background:<?= $badgeBg ?> !important;"
+              >
                 <?= escape(status_label($reportItem['status'])) ?>
               </span>
             </div>
