@@ -33,8 +33,6 @@
   border-bottom: 1px solid #eeeeee;
   border-radius: 0;
   box-shadow: none;
-<<<<<<< HEAD
-=======
 }
 
 /* Pengumuman */
@@ -266,7 +264,6 @@ body:has(.admin-red-theme) .admin-red-theme {
     .admin-red-theme .admin-announcement {
         padding: 18px;
     }
->>>>>>> 379b3b18df3e61dcdf43c1a415d0a0dc4140ed95
 }
 
 /* Pengumuman */

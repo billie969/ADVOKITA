@@ -316,7 +316,7 @@ function auth_rate_limit(): void
     }
 }
 
-function report_rows(PDO $db, string $userId, bool $admin = false): array
+function report_rows(PDO $db, string $userId, bool $admin = false, ?int $limit = null, int $offset = 0): array
 {
     $sql = "SELECT r.*, CASE WHEN r.is_anonymous THEN NULL ELSE u.full_name END AS submitter_name,
             CASE WHEN r.is_anonymous THEN NULL ELSE u.nim END AS submitter_nim
@@ -328,37 +328,63 @@ function report_rows(PDO $db, string $userId, bool $admin = false): array
     }
     if (!$admin) {
         $sql .= ' ORDER BY r.created_at DESC';
+    } elseif ($limit !== null) {
+        $sql .= ' LIMIT :report_limit OFFSET :report_offset';
     }
 
     $statement = $db->prepare($sql);
     if (!$admin) {
         $statement->execute(['user_id' => $userId]);
+    } elseif ($limit !== null) {
+        $statement->bindValue(':report_limit', $limit, PDO::PARAM_INT);
+        $statement->bindValue(':report_offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
     } else {
         $statement->execute();
     }
     $reports = $statement->fetchAll();
 
-    $attachmentSql = 'SELECT a.report_id, a.id, a.original_name AS name
-                      FROM report_attachments a
-                      JOIN reports r ON r.id = a.report_id';
-    if (!$admin) {
-        $attachmentSql .= ' WHERE r.user_id = :user_id';
-    }
-    $attachmentSql .= ' ORDER BY a.report_id, a.id';
-
-    $attachmentStatement = $db->prepare($attachmentSql);
-    if ($admin) {
-        $attachmentStatement->execute();
-    } else {
-        $attachmentStatement->execute(['user_id' => $userId]);
-    }
-
     $attachmentsByReport = [];
-    foreach ($attachmentStatement->fetchAll() as $attachment) {
-        $attachmentsByReport[(string) $attachment['report_id']][] = [
-            'id' => $attachment['id'],
-            'name' => $attachment['name'],
-        ];
+    if ($admin && $limit !== null && $reports !== []) {
+        $reportIds = array_values(array_column($reports, 'id'));
+        $placeholders = [];
+        $parameters = [];
+        foreach ($reportIds as $index => $reportId) {
+            $parameter = 'report_id_' . $index;
+            $placeholders[] = ':' . $parameter;
+            $parameters[$parameter] = (string) $reportId;
+        }
+
+        $attachmentStatement = $db->prepare(
+            'SELECT report_id, id, original_name AS name
+             FROM report_attachments
+             WHERE report_id IN (' . implode(', ', $placeholders) . ')
+             ORDER BY report_id, id',
+        );
+        $attachmentStatement->execute($parameters);
+    } elseif (!$admin || $reports !== []) {
+        $attachmentSql = 'SELECT a.report_id, a.id, a.original_name AS name
+                          FROM report_attachments a
+                          JOIN reports r ON r.id = a.report_id';
+        if (!$admin) {
+            $attachmentSql .= ' WHERE r.user_id = :user_id';
+        }
+        $attachmentSql .= ' ORDER BY a.report_id, a.id';
+        $attachmentStatement = $db->prepare($attachmentSql);
+        if ($admin) {
+            $attachmentStatement->execute();
+        } else {
+            $attachmentStatement->execute(['user_id' => $userId]);
+        }
+    }
+
+    if (isset($attachmentStatement)) {
+        foreach ($attachmentStatement->fetchAll() as $attachment) {
+            $attachmentsByReport[(string) $attachment['report_id']][] = [
+                'id' => $attachment['id'],
+                'name' => $attachment['name'],
+            ];
+        }
     }
 
     foreach ($reports as &$report) {
@@ -366,6 +392,20 @@ function report_rows(PDO $db, string $userId, bool $admin = false): array
     }
     unset($report);
     return $reports;
+}
+
+function report_stats(PDO $db): array
+{
+    $statistics = $db->query(
+        "SELECT COUNT(*) AS total,
+                COUNT(*) FILTER (WHERE status = 'pending') AS pending
+         FROM reports",
+    )->fetch();
+
+    return [
+        'total' => (int) ($statistics['total'] ?? 0),
+        'pending' => (int) ($statistics['pending'] ?? 0),
+    ];
 }
 
 function attachment_rows(PDO $db, string $reportId): array

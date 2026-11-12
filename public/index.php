@@ -134,6 +134,14 @@ $reports = [];
 $announcements = [];
 $announcementCount = 0;
 $pendingCount = 0;
+$reportCount = 0;
+$reportPageSize = 20;
+$reportPage = 1;
+$reportPageCount = 1;
+$requestedReportPage = $_GET['reportPage'] ?? null;
+if (is_string($requestedReportPage) && ctype_digit($requestedReportPage)) {
+    $reportPage = max(1, (int) $requestedReportPage);
+}
 $user = current_user();
 $db = null;
 
@@ -294,7 +302,7 @@ try {
                     throw new InputError('Laporan tidak ditemukan atau sudah diproses.', 409);
                 }
                 flash('success', 'Keputusan laporan berhasil disimpan.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-create':
                 $user = require_user('admin');
@@ -312,7 +320,7 @@ try {
                     'created_by' => (string) $user['id'],
                 ]);
                 flash('success', 'Pengumuman berhasil disimpan.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-toggle':
                 require_user('admin');
@@ -338,7 +346,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan.', 404);
                 }
                 flash('success', 'Status pengumuman berhasil diperbarui.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             case 'announcement-delete':
                 require_user('admin');
@@ -349,7 +357,7 @@ try {
                     throw new InputError('Pengumuman tidak ditemukan.', 404);
                 }
                 flash('success', 'Pengumuman berhasil dihapus.');
-                redirect('admin');
+                redirect('admin', ['reportPage' => (string) $reportPage]);
 
             default:
                 throw new InputError('Permintaan tidak dikenal.');
@@ -385,7 +393,18 @@ try {
         $caseNumber = $_GET['case'] ?? '';
         $report = is_string($caseNumber) ? find_report($db, $caseNumber, $user) : null;
     } elseif ($page === 'admin') {
-        $reports = report_rows($db, (string) $user['id'], true);
+        $reportStats = report_stats($db);
+        $reportCount = $reportStats['total'];
+        $pendingCount = $reportStats['pending'];
+        $reportPageCount = max(1, (int) ceil($reportCount / $reportPageSize));
+        $reportPage = min($reportPage, $reportPageCount);
+        $reports = report_rows(
+            $db,
+            (string) $user['id'],
+            true,
+            $reportPageSize,
+            ($reportPage - 1) * $reportPageSize,
+        );
         $announcements = $db->query(
             'SELECT id, title, body, is_published, published_at, updated_at
              FROM announcements ORDER BY updated_at DESC LIMIT 100',
@@ -394,11 +413,6 @@ try {
             $announcement['is_published'] = is_checked($announcement['is_published']);
         }
         unset($announcement);
-        foreach ($reports as $adminReport) {
-            if ($adminReport['status'] === 'pending') {
-                $pendingCount++;
-            }
-        }
         $announcementCount = count($announcements);
     }
 } catch (InputError $actionError) {
@@ -443,7 +457,18 @@ if (
     && $db instanceof PDO
 ) {
     try {
-        $reports = report_rows($db, (string) $user['id'], true);
+        $reportStats = report_stats($db);
+        $reportCount = $reportStats['total'];
+        $pendingCount = $reportStats['pending'];
+        $reportPageCount = max(1, (int) ceil($reportCount / $reportPageSize));
+        $reportPage = min($reportPage, $reportPageCount);
+        $reports = report_rows(
+            $db,
+            (string) $user['id'],
+            true,
+            $reportPageSize,
+            ($reportPage - 1) * $reportPageSize,
+        );
         $announcements = $db->query(
             'SELECT id, title, body, is_published, published_at, updated_at
              FROM announcements ORDER BY updated_at DESC LIMIT 100',
@@ -452,10 +477,6 @@ if (
             $announcement['is_published'] = is_checked($announcement['is_published']);
         }
         unset($announcement);
-        $pendingCount = count(array_filter(
-            $reports,
-            static fn (array $adminReport): bool => $adminReport['status'] === 'pending',
-        ));
         $announcementCount = count($announcements);
     } catch (Throwable $applicationError) {
         error_log('Unable to reload admin data: ' . $applicationError);
