@@ -15,9 +15,13 @@
         <label class="form-label" for="registerName">Nama lengkap <span class="text-danger">*</span></label>
         <input class="form-control" id="registerName" name="fullName" maxlength="120" autocomplete="name" required placeholder="Nama lengkap" value="<?= escape($formValues['fullName'] ?? '') ?>">
       </div>
-      <div class="mb-3">
-        <label class="form-label" for="registerNim">NPM <span class="text-danger">*</span></label>
-        <input class="form-control" id="registerNim" name="nim" required inputmode="numeric" pattern="[0-9]{4,20}" autocomplete="username" placeholder="Masukkan NPM" value="<?= escape($formValues['nim'] ?? '') ?>">
+
+      <div class="rg-field">
+        <label class="rg-label" for="registerNim">NPM <b>*</b></label>
+        <div class="rg-input">
+          <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M15 10h3M15 14h3"/></svg>
+          <input id="registerNim" name="nim" required inputmode="numeric" pattern="[0-9]{4,20}" autocomplete="username" placeholder="Masukkan NPM Anda" value="<?= escape($formValues['nim'] ?? '') ?>">
+        </div>
       </div>
       <div class="mb-3">
         <label class="form-label" for="registerPassword">Kata sandi <span class="text-danger">*</span></label>
