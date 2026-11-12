@@ -131,7 +131,10 @@ $success = flash('success');
 $formValues = [];
 $report = null;
 $reports = [];
+$reportFilters = ['search' => '', 'status' => '', 'category' => '', 'dateFrom' => null, 'dateTo' => null];
+$reportStatistics = ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0];
 $announcements = [];
+$announcementToEdit = null;
 $announcementCount = 0;
 $pendingCount = 0;
 $user = current_user();
@@ -300,18 +303,53 @@ try {
                 $user = require_user('admin');
                 $announcement = validate_announcement($_POST);
                 $statement = $db->prepare(
-                    'INSERT INTO announcements (title, body, is_published, published_at, created_by)
-                     VALUES (:title, :body, :is_published, CASE WHEN :published_at THEN NOW() ELSE NULL END, :created_by)',
+                    'INSERT INTO announcements
+                     (title, body, category, is_pinned, is_published, published_at, expires_at, created_by)
+                     VALUES (:title, :body, :category, :is_pinned, :is_published,
+                             CASE WHEN :publish_time THEN NOW() ELSE NULL END, :expires_at, :created_by)',
                 );
                 $published = $announcement['isPublished'] ? 'true' : 'false';
                 $statement->execute([
                     'title' => $announcement['title'],
                     'body' => $announcement['body'],
+                    'category' => $announcement['category'],
+                    'is_pinned' => $announcement['isPinned'] ? 'true' : 'false',
                     'is_published' => $published,
-                    'published_at' => $published,
+                    'publish_time' => $published,
+                    'expires_at' => $announcement['expiresAt'],
                     'created_by' => (string) $user['id'],
                 ]);
                 flash('success', 'Pengumuman berhasil disimpan.');
+                redirect('admin');
+
+            case 'announcement-edit':
+                require_user('admin');
+                $announcementId = positive_id($_POST['announcementId'] ?? null, 'ID pengumuman');
+                $announcement = validate_announcement($_POST);
+                $published = $announcement['isPublished'] ? 'true' : 'false';
+                $statement = $db->prepare(
+                    'UPDATE announcements
+                     SET title = :title, body = :body, category = :category,
+                         is_pinned = :is_pinned, is_published = :is_published,
+                         published_at = CASE WHEN :publish_time
+                             THEN COALESCE(published_at, NOW()) ELSE NULL END,
+                         expires_at = :expires_at, updated_at = NOW()
+                     WHERE id = :id',
+                );
+                $statement->execute([
+                    'title' => $announcement['title'],
+                    'body' => $announcement['body'],
+                    'category' => $announcement['category'],
+                    'is_pinned' => $announcement['isPinned'] ? 'true' : 'false',
+                    'is_published' => $published,
+                    'publish_time' => $published,
+                    'expires_at' => $announcement['expiresAt'],
+                    'id' => $announcementId,
+                ]);
+                if ($statement->rowCount() !== 1) {
+                    throw new InputError('Pengumuman tidak ditemukan atau tidak berubah.', 404);
+                }
+                flash('success', 'Pengumuman berhasil diperbarui.');
                 redirect('admin');
 
             case 'announcement-toggle':
@@ -324,14 +362,14 @@ try {
                 $statement = $db->prepare(
                     'UPDATE announcements
                      SET is_published = :is_published,
-                         published_at = CASE WHEN :published_at THEN COALESCE(published_at, NOW()) ELSE NULL END,
+                         published_at = CASE WHEN :publish_time THEN COALESCE(published_at, NOW()) ELSE NULL END,
                          updated_at = NOW()
                      WHERE id = :id',
                 );
                 $published = $isPublished ? 'true' : 'false';
                 $statement->execute([
                     'is_published' => $published,
-                    'published_at' => $published,
+                    'publish_time' => $published,
                     'id' => $announcementId,
                 ]);
                 if ($statement->rowCount() !== 1) {
@@ -375,9 +413,15 @@ try {
     }
     if ($page === 'dashboard') {
         $announcements = $db->query(
-            'SELECT id, title, body, published_at FROM announcements
-             WHERE is_published = TRUE ORDER BY published_at DESC LIMIT 20',
+            'SELECT id, title, body, category, is_pinned, published_at, expires_at
+             FROM announcements
+             WHERE is_published = TRUE AND (expires_at IS NULL OR expires_at > NOW())
+             ORDER BY is_pinned DESC, published_at DESC LIMIT 20',
         )->fetchAll();
+        foreach ($announcements as &$announcement) {
+            $announcement['is_pinned'] = is_checked($announcement['is_pinned']);
+        }
+        unset($announcement);
         $reports = report_rows($db, (string) $user['id']);
     } elseif ($page === 'history') {
         $reports = report_rows($db, (string) $user['id']);
@@ -385,20 +429,44 @@ try {
         $caseNumber = $_GET['case'] ?? '';
         $report = is_string($caseNumber) ? find_report($db, $caseNumber, $user) : null;
     } elseif ($page === 'admin') {
-        $reports = report_rows($db, (string) $user['id'], true);
+        try {
+            $reportFilters = validate_report_filters($_GET);
+        } catch (InputError $filterError) {
+            $error = $filterError->getMessage();
+        }
+        $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
+        $reportStatistics = report_statistics($db);
         $announcements = $db->query(
-            'SELECT id, title, body, is_published, published_at, updated_at
-             FROM announcements ORDER BY updated_at DESC LIMIT 100',
+            'SELECT id, title, body, category, is_pinned, is_published,
+                    published_at, expires_at, updated_at
+             FROM announcements ORDER BY is_pinned DESC, updated_at DESC LIMIT 100',
         )->fetchAll();
         foreach ($announcements as &$announcement) {
+            $announcement['is_pinned'] = is_checked($announcement['is_pinned']);
             $announcement['is_published'] = is_checked($announcement['is_published']);
         }
         unset($announcement);
-        foreach ($reports as $adminReport) {
-            if ($adminReport['status'] === 'pending') {
-                $pendingCount++;
+
+        if (isset($_GET['editAnnouncement'])) {
+            try {
+                $editId = positive_id($_GET['editAnnouncement'], 'ID pengumuman');
+                $statement = $db->prepare(
+                    'SELECT id, title, body, category, is_pinned, is_published, expires_at
+                     FROM announcements WHERE id = :id',
+                );
+                $statement->execute(['id' => $editId]);
+                $announcementToEdit = $statement->fetch();
+                if (!is_array($announcementToEdit)) {
+                    $error = 'Pengumuman tidak ditemukan.';
+                } else {
+                    $announcementToEdit['is_published'] = is_checked($announcementToEdit['is_published']);
+                    $announcementToEdit['is_pinned'] = is_checked($announcementToEdit['is_pinned']);
+                }
+            } catch (InputError $editError) {
+                $error = $editError->getMessage();
             }
         }
+        $pendingCount = $reportStatistics['pending'];
         $announcementCount = count($announcements);
     }
 } catch (InputError $actionError) {
@@ -410,10 +478,10 @@ try {
             'login' => 'login',
             'register' => 'register',
             'report' => 'report',
-            'decision', 'announcement-create', 'announcement-toggle', 'announcement-delete' => 'admin',
+            'decision', 'announcement-create', 'announcement-edit', 'announcement-toggle', 'announcement-delete' => 'admin',
             default => $page,
         };
-        $allowedOldValues = ['nim', 'fullName', 'title', 'category', 'incidentDate', 'chronology', 'anonymous', 'body', 'isPublished'];
+        $allowedOldValues = ['nim', 'fullName', 'title', 'category', 'incidentDate', 'chronology', 'anonymous', 'body', 'isPublished', 'isPinned', 'expiresAt'];
         foreach ($allowedOldValues as $name) {
             if (isset($_POST[$name]) && is_string($_POST[$name])) {
                 $formValues[$name] = $_POST[$name];
@@ -424,6 +492,12 @@ try {
                 if (isset($_POST[$inputName]) && is_string($_POST[$inputName])) {
                     $formValues[$valueName] = $_POST[$inputName];
                 }
+            }
+        }
+        if (in_array($action, ['announcement-create', 'announcement-edit'], true)) {
+            $formValues['action'] = $action;
+            if (isset($_POST['announcementId']) && is_string($_POST['announcementId'])) {
+                $formValues['announcementId'] = $_POST['announcementId'];
             }
         }
     }
@@ -443,20 +517,32 @@ if (
     && $db instanceof PDO
 ) {
     try {
-        $reports = report_rows($db, (string) $user['id'], true);
+        $reports = report_rows($db, (string) $user['id'], true, $reportFilters);
+        $reportStatistics = report_statistics($db);
         $announcements = $db->query(
-            'SELECT id, title, body, is_published, published_at, updated_at
-             FROM announcements ORDER BY updated_at DESC LIMIT 100',
+            'SELECT id, title, body, category, is_pinned, is_published,
+                    published_at, expires_at, updated_at
+             FROM announcements ORDER BY is_pinned DESC, updated_at DESC LIMIT 100',
         )->fetchAll();
         foreach ($announcements as &$announcement) {
+            $announcement['is_pinned'] = is_checked($announcement['is_pinned']);
             $announcement['is_published'] = is_checked($announcement['is_published']);
         }
         unset($announcement);
-        $pendingCount = count(array_filter(
-            $reports,
-            static fn (array $adminReport): bool => $adminReport['status'] === 'pending',
-        ));
+        $pendingCount = $reportStatistics['pending'];
         $announcementCount = count($announcements);
+        if (($formValues['action'] ?? '') === 'announcement-edit' && isset($formValues['announcementId'])) {
+            $statement = $db->prepare(
+                'SELECT id, title, body, category, is_pinned, is_published, expires_at
+                 FROM announcements WHERE id = :id',
+            );
+            $statement->execute(['id' => $formValues['announcementId']]);
+            $announcementToEdit = $statement->fetch() ?: null;
+            if (is_array($announcementToEdit)) {
+                $announcementToEdit['is_pinned'] = is_checked($announcementToEdit['is_pinned']);
+                $announcementToEdit['is_published'] = is_checked($announcementToEdit['is_published']);
+            }
+        }
     } catch (Throwable $applicationError) {
         error_log('Unable to reload admin data: ' . $applicationError);
         $error = 'Data panel admin tidak dapat dimuat. Coba muat ulang halaman.';

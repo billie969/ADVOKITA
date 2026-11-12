@@ -32,3 +32,11 @@ document.querySelectorAll('.moderation-decision-form').forEach((form) => {
     }
   });
 });
+
+document.querySelectorAll('.announcement-delete-form').forEach((form) => {
+  form.addEventListener('submit', (event) => {
+    if (!window.confirm('Hapus pengumuman ini? Tindakan ini tidak dapat dibatalkan.')) {
+      event.preventDefault();
+    }
+  });
+});

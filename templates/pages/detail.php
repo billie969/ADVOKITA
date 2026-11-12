@@ -22,8 +22,8 @@
         <h3>Kronologi</h3>
         <p class="detail-description"><?= escape($report['chronology']) ?></p>
       </section>
-      <?php if ($report['decision_note'] !== null): ?>
-        <section class="detail-section"><h3>Catatan keputusan</h3><p class="detail-description"><?= escape($report['decision_note']) ?></p></section>
+      <?php if ($report['status'] !== 'pending'): ?>
+        <section class="detail-section"><h3>Keputusan admin</h3><?php if ($report['decision_note'] !== null): ?><p class="detail-description"><?= escape($report['decision_note']) ?></p><?php endif; ?><?php if ($report['decided_at'] !== null): ?><p>Diputuskan <?= escape(format_datetime($report['decided_at'])) ?><?php if ($report['decided_by_name'] !== null): ?> oleh <?= escape($report['decided_by_name']) ?><?php endif; ?></p><?php endif; ?></section>
       <?php endif; ?>
       <?php if ($report['attachments'] !== []): ?>
         <section class="detail-section"><h3>Lampiran</h3>

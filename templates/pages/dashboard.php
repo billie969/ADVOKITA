@@ -47,7 +47,7 @@
               </span>
 
               <div class="announcement-content">
-                <span class="announcement-label">Informasi terbaru</span>
+                <span class="announcement-label"><?= escape($announcement['category']) ?><?= $announcement['is_pinned'] ? ' · PENTING' : '' ?></span>
                 <h3><?= escape($announcement['title']) ?></h3>
 
                 <time class="announcement-date" datetime="<?= escape($announcement['published_at']) ?>">
@@ -55,6 +55,7 @@
                 </time>
 
                 <p><?= escape($announcement['body']) ?></p>
+                <?php if ($announcement['expires_at'] !== null): ?><small class="announcement-expiry">Berlaku hingga <?= escape(format_date($announcement['expires_at'])) ?></small><?php endif; ?>
               </div>
             </article>
           <?php endforeach; ?>
