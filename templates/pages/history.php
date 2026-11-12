@@ -34,6 +34,7 @@ $filters = $filters ?? ['case' => '', 'status' => ''];
       value="<?= escape($filters['case']) ?>"
     >
 
+    <!-- Filter Status -->
     <select name="status" class="form-select" style="max-width:180px">
       <option value="">Semua Status</option>
       <option value="pending" <?= $filters['status'] === 'pending' ? 'selected' : '' ?>>Menunggu</option>
@@ -47,6 +48,12 @@ $filters = $filters ?? ['case' => '', 'status' => ''];
       <option value="Pidana" <?= ($_GET['category'] ?? '') === 'Pidana' ? 'selected' : '' ?>>Pidana</option>
       <option value="Perdata" <?= ($_GET['category'] ?? '') === 'Perdata' ? 'selected' : '' ?>>Perdata</option>
       <option value="Keluarga" <?= ($_GET['category'] ?? '') === 'Keluarga' ? 'selected' : '' ?>>Keluarga</option>
+    </select>
+
+    <!-- Filter Urutan -->
+    <select name="sort" class="form-select" style="max-width:160px" onchange="this.form.submit()">
+      <option value="newest" <?= ($_GET['sort'] ?? 'newest') === 'newest' ? 'selected' : '' ?>>Terbaru</option>
+      <option value="oldest" <?= ($_GET['sort'] ?? '') === 'oldest' ? 'selected' : '' ?>>Terlama</option>
     </select>
 
     <button class="btn btn-danger" type="submit">Cari</button>
@@ -76,6 +83,7 @@ $filters = $filters ?? ['case' => '', 'status' => ''];
               <h2><?= escape($reportItem['title']) ?></h2>
               <span class="report-category"><?= escape($reportItem['category']) ?></span>
             </div>
+
             <span class="badge <?= escape(status_class($reportItem['status'])) ?>">
               <?= escape(status_label($reportItem['status'])) ?>
             </span>
