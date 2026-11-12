@@ -337,8 +337,32 @@ function report_rows(PDO $db, string $userId, bool $admin = false): array
         $statement->execute();
     }
     $reports = $statement->fetchAll();
+
+    $attachmentSql = 'SELECT a.report_id, a.id, a.original_name AS name
+                      FROM report_attachments a
+                      JOIN reports r ON r.id = a.report_id';
+    if (!$admin) {
+        $attachmentSql .= ' WHERE r.user_id = :user_id';
+    }
+    $attachmentSql .= ' ORDER BY a.report_id, a.id';
+
+    $attachmentStatement = $db->prepare($attachmentSql);
+    if ($admin) {
+        $attachmentStatement->execute();
+    } else {
+        $attachmentStatement->execute(['user_id' => $userId]);
+    }
+
+    $attachmentsByReport = [];
+    foreach ($attachmentStatement->fetchAll() as $attachment) {
+        $attachmentsByReport[(string) $attachment['report_id']][] = [
+            'id' => $attachment['id'],
+            'name' => $attachment['name'],
+        ];
+    }
+
     foreach ($reports as &$report) {
-        $report['attachments'] = attachment_rows($db, (string) $report['id']);
+        $report['attachments'] = $attachmentsByReport[(string) $report['id']] ?? [];
     }
     unset($report);
     return $reports;
