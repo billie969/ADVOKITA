@@ -904,7 +904,7 @@ $rejectedReports = count(array_filter($reports, static fn(array $r): bool => ($r
       <h1>Beranda <span>ADVOKITA.</span></h1>
 
       <p>
-        Selamat datang di portal bantuan hukum dan pengaduan mahasiswa.
+        Selamat datang di portal bantuan hukum dan pengaduan sivitas akademika.
         Pantau status perkembangan tindak lanjut pengaduan Anda, simak pengumuman resmi kampus,
         dan ajukan laporan baru dengan jaminan perlindungan kerahasiaan penuh.
       </p>

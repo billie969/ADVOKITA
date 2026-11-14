@@ -212,6 +212,9 @@ function validate_registration(array $input): array
 {
     $fullName = required_text($input['fullName'] ?? null, 'Nama lengkap', 120);
     $nim = normalize_nim($input['nim'] ?? null);
+    $userTypeRaw = strtolower(trim((string) ($input['user_type'] ?? $input['userRole'] ?? 'mahasiswa')));
+    $validUserTypes = ['mahasiswa', 'dosen', 'civitas'];
+    $userType = in_array($userTypeRaw, $validUserTypes, true) ? $userTypeRaw : 'mahasiswa';
     $password = $input['password'] ?? null;
     if (!is_string($password) || strlen($password) < 8 || strlen($password) > 72) {
         throw new InputError('Kata sandi harus memiliki 8 sampai 72 byte.');
@@ -219,7 +222,7 @@ function validate_registration(array $input): array
     if (!is_string($input['passwordConfirm'] ?? null) || !hash_equals($password, $input['passwordConfirm'])) {
         throw new InputError('Konfirmasi kata sandi tidak cocok.');
     }
-    return ['fullName' => $fullName, 'nim' => $nim, 'password' => $password];
+    return ['fullName' => $fullName, 'nim' => $nim, 'password' => $password, 'userType' => $userType];
 }
 
 function validate_report(array $input): array

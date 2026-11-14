@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   full_name VARCHAR(120) NOT NULL,
   password_hash TEXT NOT NULL,
   role VARCHAR(10) NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
+  user_type VARCHAR(32) NOT NULL DEFAULT 'mahasiswa',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

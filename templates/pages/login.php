@@ -268,6 +268,7 @@
   position: absolute;
   top: 50%;
   right: 13px;
+  z-index: 5;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -576,29 +577,38 @@
 </main>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const passwordInput = document.getElementById('loginPassword');
-  const toggleButton = document.getElementById('togglePassword');
+(function () {
+  function initPasswordToggle() {
+    var passwordInput = document.getElementById('loginPassword');
+    var toggleButton = document.getElementById('togglePassword');
 
-  if (!passwordInput || !toggleButton) {
-    return;
+    if (!passwordInput || !toggleButton) {
+      return;
+    }
+
+    toggleButton.addEventListener('click', function (e) {
+      e.preventDefault();
+      var isPassword = passwordInput.type === 'password';
+
+      passwordInput.type = isPassword ? 'text' : 'password';
+
+      toggleButton.innerHTML = isPassword
+        ? '<i class="bi bi-eye-slash" aria-hidden="true"></i>'
+        : '<i class="bi bi-eye" aria-hidden="true"></i>';
+
+      toggleButton.setAttribute(
+        'aria-label',
+        isPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'
+      );
+
+      toggleButton.setAttribute('aria-pressed', String(isPassword));
+    });
   }
 
-  toggleButton.addEventListener('click', function () {
-    const isPassword = passwordInput.type === 'password';
-
-    passwordInput.type = isPassword ? 'text' : 'password';
-
-    toggleButton.innerHTML = isPassword
-      ? '<i class="bi bi-eye-slash" aria-hidden="true"></i>'
-      : '<i class="bi bi-eye" aria-hidden="true"></i>';
-
-    toggleButton.setAttribute(
-      'aria-label',
-      isPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'
-    );
-
-    toggleButton.setAttribute('aria-pressed', String(isPassword));
-  });
-});
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPasswordToggle);
+  } else {
+    initPasswordToggle();
+  }
+})();
 </script>

@@ -103,7 +103,7 @@
 
       <div class="rg-eyebrow">Mulai bergabung</div>
       <h2 class="rg-title">Buat Akun Baru</h2>
-      <p class="rg-lead">Daftar menggunakan data mahasiswa untuk mengajukan laporan di ADVOKITA.</p>
+      <p class="rg-lead">Daftar menggunakan data Anda untuk mengajukan laporan di ADVOKITA.</p>
 
       <div class="rg-field" style="margin-top:0">
         <label class="rg-label" for="registerName">Nama lengkap <b>*</b></label>
@@ -114,14 +114,14 @@
       </div>
 
       <div class="rg-field">
-        <label class="rg-label" for="registerRole">Peran / Status <b>*</b></label>
+        <label class="rg-label" for="registerUserType">Peran / Status <b>*</b></label>
         <div class="rg-input">
           <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <select id="registerRole" name="userRole" required>
-            <option value="" disabled selected>Pilih peran Anda</option>
-            <option value="mahasiswa" <?= (($formValues['userRole'] ?? '') === 'mahasiswa') ? 'selected' : '' ?>>Mahasiswa</option>
-            <option value="dosen" <?= (($formValues['userRole'] ?? '') === 'dosen') ? 'selected' : '' ?>>Dosen</option>
-            <option value="civitas" <?= (($formValues['userRole'] ?? '') === 'civitas') ? 'selected' : '' ?>>Civitas Fakultas</option>
+          <select id="registerUserType" name="user_type" required>
+            <option value="" disabled <?= empty($formValues['user_type']) ? 'selected' : '' ?>>Pilih peran Anda</option>
+            <option value="mahasiswa" <?= (($formValues['user_type'] ?? '') === 'mahasiswa') ? 'selected' : '' ?>>Mahasiswa</option>
+            <option value="dosen" <?= (($formValues['user_type'] ?? '') === 'dosen') ? 'selected' : '' ?>>Dosen</option>
+            <option value="civitas" <?= (($formValues['user_type'] ?? '') === 'civitas') ? 'selected' : '' ?>>Civitas Fakultas</option>
           </select>
           <svg class="rg-select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
@@ -141,7 +141,7 @@
           <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
           <input type="password" id="registerPassword" name="password" minlength="8" maxlength="72" autocomplete="new-password" required placeholder="Minimal 8 karakter">
           <button class="rg-eye" type="button" data-toggle="registerPassword" aria-label="Tampilkan kata sandi">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="rg-eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
       </div>
@@ -152,7 +152,7 @@
           <svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
           <input type="password" id="registerPasswordConfirm" name="passwordConfirm" minlength="8" maxlength="72" autocomplete="new-password" required placeholder="Ulangi kata sandi">
           <button class="rg-eye" type="button" data-toggle="registerPasswordConfirm" aria-label="Tampilkan konfirmasi kata sandi">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="rg-eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
       </div>
@@ -172,18 +172,29 @@
 
 <script>
 (function () {
+  var eyeSvg = '<svg class="rg-eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var eyeOffSvg = '<svg class="rg-eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
   document.querySelectorAll('[data-toggle]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var input = document.getElementById(btn.dataset.toggle);
-      input.type = input.type === 'password' ? 'text' : 'password';
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var input = document.getElementById(btn.getAttribute('data-toggle'));
+      if (!input) return;
+      var isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      btn.innerHTML = isPassword ? eyeOffSvg : eyeSvg;
+      btn.setAttribute('aria-label', isPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
     });
   });
+
   var pass = document.getElementById('registerPassword');
   var confirm = document.getElementById('registerPasswordConfirm');
   function check() {
     confirm.setCustomValidity(confirm.value && confirm.value !== pass.value ? 'Konfirmasi kata sandi tidak sama.' : '');
   }
-  pass.addEventListener('input', check);
-  confirm.addEventListener('input', check);
+  if (pass && confirm) {
+    pass.addEventListener('input', check);
+    confirm.addEventListener('input', check);
+  }
 })();
 </script>

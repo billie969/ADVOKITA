@@ -60,7 +60,18 @@
               </span>
               <span class="d-flex flex-column lh-sm">
                 <strong class="text-dark small"><?= escape($user['fullName']) ?></strong>
-                <small class="text-muted" style="font-size: 0.75rem;"><?= $user['role'] === 'admin' ? 'Admin' : 'Mahasiswa' ?></small>
+                <small class="text-muted" style="font-size: 0.75rem;"><?php
+                  if ($user['role'] === 'admin') {
+                      echo 'Admin';
+                  } else {
+                      $typeMap = [
+                          'dosen' => 'Dosen',
+                          'civitas' => 'Civitas Fakultas',
+                          'mahasiswa' => 'Mahasiswa',
+                      ];
+                      echo escape($typeMap[$user['userType'] ?? 'mahasiswa'] ?? 'Mahasiswa');
+                  }
+                ?></small>
               </span>
             </div>
             

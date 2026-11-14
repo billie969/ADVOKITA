@@ -173,7 +173,7 @@ try {
                 if (!is_string($password) || $password === '') {
                     throw new InputError('NPM atau kata sandi tidak valid.', 401);
                 }
-                $statement = $db->prepare('SELECT id, nim, full_name, role, password_hash FROM users WHERE nim = :nim');
+                $statement = $db->prepare('SELECT id, nim, full_name, role, user_type, password_hash FROM users WHERE nim = :nim');
                 $statement->execute(['nim' => $nim]);
                 $account = $statement->fetch();
                 if (!is_array($account) || !password_verify($password, (string) $account['password_hash'])) {
@@ -185,6 +185,7 @@ try {
                     'nim' => $account['nim'],
                     'fullName' => $account['full_name'],
                     'role' => $account['role'],
+                    'userType' => $account['user_type'] ?? 'mahasiswa',
                 ];
                 unset($_SESSION['_csrf']);
                 redirect($account['role'] === 'admin' ? 'admin' : 'dashboard');
@@ -194,14 +195,15 @@ try {
                 $registration = validate_registration($_POST);
                 try {
                     $statement = $db->prepare(
-                        "INSERT INTO users (nim, full_name, password_hash)
-                         VALUES (:nim, :full_name, :password_hash)
-                         RETURNING id, nim, full_name, role",
+                        "INSERT INTO users (nim, full_name, password_hash, user_type)
+                         VALUES (:nim, :full_name, :password_hash, :user_type)
+                         RETURNING id, nim, full_name, role, user_type",
                     );
                     $statement->execute([
                         'nim' => $registration['nim'],
                         'full_name' => $registration['fullName'],
                         'password_hash' => password_hash($registration['password'], PASSWORD_BCRYPT, ['cost' => 12]),
+                        'user_type' => $registration['userType'] ?? 'mahasiswa',
                     ]);
                     $account = $statement->fetch();
                 } catch (PDOException $databaseError) {
@@ -216,6 +218,7 @@ try {
                     'nim' => $account['nim'],
                     'fullName' => $account['full_name'],
                     'role' => $account['role'],
+                    'userType' => $account['user_type'] ?? ($registration['userType'] ?? 'mahasiswa'),
                 ];
                 unset($_SESSION['_csrf']);
                 redirect('dashboard');
