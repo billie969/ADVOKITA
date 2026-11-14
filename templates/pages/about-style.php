@@ -1118,82 +1118,145 @@
 }
 
 @media (max-width: 576px) {
+  .advokita-page {
+    overflow-x: hidden;
+  }
+
+  .advokita-page .dashboard-container {
+    padding: 0 4px;
+  }
+
   .adv-hero {
-    min-height: 380px;
-    padding: 35px 23px;
-    border-radius: 11px;
+    min-height: auto;
+    padding: 32px 20px;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .adv-hero-content {
+    max-width: 100%;
+    width: 100%;
   }
 
   .adv-hero h1 {
-    font-size: 34px;
+    font-size: 28px;
+    line-height: 1.25;
+    margin: 18px 0 14px;
+    letter-spacing: -.5px;
   }
 
   .adv-hero-content > p {
-    font-size: 13px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    margin-bottom: 20px;
   }
 
   .adv-hero-decoration {
-    right: -150px;
-    opacity: .23;
+    display: none;
   }
 
   .adv-hero-actions {
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
   }
 
   .adv-btn-primary,
   .adv-btn-outline {
-    padding: 11px 13px;
-    font-size: 11px;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 13px;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .adv-hero-caption {
+    margin-top: 18px;
+    font-size: 11.5px;
   }
 
   .adv-navigation {
-    top: 5px;
-    padding: 12px 10px;
+    position: static;
+    top: auto;
+    padding: 14px 12px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+
+  .adv-nav-heading {
+    padding: 0 2px;
+    margin-bottom: 10px;
   }
 
   .adv-nav-links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .adv-nav-link {
-    padding: 10px 12px;
-    font-size: 11px;
+    flex: 1 1 calc(50% - 4px);
+    padding: 10px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+    justify-content: center;
+  }
+
+  .adv-nav-link:last-child:nth-child(odd) {
+    flex: 1 1 100%;
   }
 
   .adv-section {
-    padding: 25px 3px;
+    padding: 24px 0;
+  }
+
+  .adv-section-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
   }
 
   .adv-section-heading h2 {
-    font-size: 23px;
+    font-size: 22px;
+    line-height: 1.3;
   }
 
   .adv-section-number {
-    font-size: 32px;
+    font-size: 26px;
+    flex-shrink: 0;
   }
 
   .adv-history-side {
-    padding: 24px;
+    padding: 20px 18px;
+    border-radius: 12px;
   }
 
   .adv-history-side h3 {
-    font-size: 21px;
+    font-size: 19px;
+    line-height: 1.4;
   }
 
   .adv-history-content p {
-    font-size: 13px;
+    font-size: 13.5px;
+    line-height: 1.75;
   }
 
   .adv-vision-card {
-    padding: 22px 18px;
-    gap: 13px;
+    padding: 20px 16px;
+    gap: 14px;
+    border-radius: 12px;
   }
 
   .adv-vision-icon {
-    min-width: 42px;
-    height: 42px;
-    font-size: 20px;
+    min-width: 44px;
+    height: 44px;
+    font-size: 22px;
+    border-radius: 10px;
   }
 
   .adv-vision-card h3 {
@@ -1201,45 +1264,65 @@
   }
 
   .adv-vision-card p {
-    font-size: 12px;
+    font-size: 13px;
+    line-height: 1.65;
   }
 
   .adv-mission-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .adv-mission-card {
+    padding: 20px 16px;
+    border-radius: 12px;
   }
 
   .adv-org-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .adv-org-card {
+    border-radius: 12px;
   }
 
   .adv-service-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .adv-service-card {
-    min-height: 195px;
+    min-height: auto;
+    padding: 22px 18px;
+    border-radius: 12px;
   }
 
   .adv-service-bottom {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .adv-contact-info {
-    padding: 23px 18px;
+    padding: 22px 18px;
+    border-radius: 12px;
   }
 
   .adv-contact-info h3 {
-    font-size: 20px;
+    font-size: 19px;
   }
 
   .adv-map-card {
-    padding: 25px 20px;
+    padding: 22px 18px;
+    border-radius: 12px;
   }
 
   .adv-footer-bottom {
     flex-direction: column;
     align-items: center;
+    text-align: center;
+    gap: 10px;
   }
 
   .adv-back-top {
