@@ -581,6 +581,17 @@
   overflow: hidden;
 }
 
+/* Hilangkan card ganda dari dashboard-container di halaman tentang kami */
+.advokita-page .dashboard-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  width: 100% !important;
+}
+
 .advokita-page * {
   box-sizing: border-box;
 }
