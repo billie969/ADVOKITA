@@ -992,16 +992,7 @@
 }
 
 .adv-footer-icon {
-  width: 58px;
-  height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 18px;
-  border-radius: 14px;
-  background: #fff0f1;
-  color: var(--adv-red);
-  font-size: 28px;
+  display: none;
 }
 
 .adv-footer .adv-eyebrow {

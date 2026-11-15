@@ -1,8 +1,5 @@
 <!-- PENUTUP -->
 <section class="adv-footer">
-  <div class="adv-footer-icon">
-    <i class="bi bi-scale"></i>
-  </div>
   <span class="adv-eyebrow">OUR COMMITMENT</span>
   <h2>ADVOKITA</h2>
   <p>
