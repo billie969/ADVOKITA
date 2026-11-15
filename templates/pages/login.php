@@ -341,6 +341,11 @@
   text-decoration: underline;
 }
 
+.login-forgot-link:hover {
+  color: var(--adv-red-dark) !important;
+  text-decoration: underline !important;
+}
+
 .login-security {
   display: flex;
   align-items: center;
@@ -511,9 +516,14 @@
         <!-- PASSWORD -->
         <div class="login-field">
 
-          <label for="loginPassword">
-            Kata Sandi <span class="login-required">*</span>
-          </label>
+          <div class="login-field-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+            <label for="loginPassword" style="margin-bottom:0;">
+              Kata Sandi <span class="login-required">*</span>
+            </label>
+            <a href="<?= escape(url('about-contact')) ?>#kontak" class="login-forgot-link" style="font-size:0.8rem;color:var(--adv-red);font-weight:600;text-decoration:none;">
+              Lupa kata sandi?
+            </a>
+          </div>
 
           <div class="login-input-wrap">
 

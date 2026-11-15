@@ -25,7 +25,7 @@ require __DIR__ . '/about-style.php';
           <h3>Akses Informasi Hukum Dimulai dari Sini.</h3>
           <p>
             Untuk mendapatkan informasi lebih lanjut mengenai layanan
-            bantuan hukum, silakan hubungi ADVOKITA melalui informasi berikut.
+            bantuan hukum maupun bantuan reset kata sandi akun Anda, silakan hubungi ADVOKITA melalui kontak berikut.
           </p>
 
           <div class="adv-contact-items">
