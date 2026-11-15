@@ -145,11 +145,7 @@
 }
 
 .login-brand-divider {
-  width: 48px;
-  height: 3px;
-  margin: 24px auto;
-  border-radius: 5px;
-  background: #e34c5c;
+  display: none;
 }
 
 .login-brand-caption {
@@ -182,9 +178,7 @@
 
 .login-eyebrow::before {
   content: "";
-  width: 22px;
-  height: 2px;
-  background: var(--adv-red);
+  display: none;
 }
 
 .login-form-heading h2 {

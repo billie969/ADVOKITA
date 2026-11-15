@@ -25,7 +25,6 @@ require __DIR__ . '/about-style.php';
           </div>
           <span class="adv-history-caption">ACCESS TO JUSTICE</span>
           <h3>Setiap Orang Berhak Mendapatkan Keadilan.</h3>
-          <div class="adv-history-line"></div>
           <p>
             Berawal dari kepedulian terhadap masyarakat yang membutuhkan
             akses informasi dan pendampingan hukum.

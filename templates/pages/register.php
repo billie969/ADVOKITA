@@ -34,12 +34,12 @@
 .rg-brand-title{font-size:40px;font-weight:800;letter-spacing:.06em;line-height:1;margin:0}
 .rg-brand-title span{color:var(--pink)}
 .rg-brand-sub{margin:16px 0 0;font-size:14px;font-weight:500;color:#e8ebf2}
-.rg-brand-line{width:48px;height:3px;border:0;border-radius:2px;background:var(--pink);opacity:1;margin:24px 0 20px}
+.rg-brand-line{display:none}
 .rg-brand-tag{font-size:11.5px;font-weight:500;letter-spacing:.14em;color:#aab2c4;text-transform:uppercase}
 
 .rg-form{padding:48px 48px 36px}
 .rg-eyebrow{display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:700;letter-spacing:.16em;color:var(--red);text-transform:uppercase}
-.rg-eyebrow::before{content:"";width:22px;height:2px;background:var(--red)}
+.rg-eyebrow::before{content:"";display:none}
 .rg-title{font-size:30px;font-weight:800;margin:10px 0 0;letter-spacing:-.02em}
 .rg-lead{margin:8px 0 26px;font-size:14px;line-height:1.7;color:var(--muted)}
 .rg-field{margin-top:18px}

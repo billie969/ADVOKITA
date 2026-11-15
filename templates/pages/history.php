@@ -68,9 +68,7 @@
 
 .history-eyebrow::before {
   content: "";
-  width: 25px;
-  height: 2px;
-  background: #e65b69;
+  display: none;
 }
 
 .history-heading h1 {

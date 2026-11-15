@@ -100,7 +100,6 @@
           </div>
           <span class="adv-history-caption">ACCESS TO JUSTICE</span>
           <h3>Setiap Orang Berhak Mendapatkan Keadilan.</h3>
-          <div class="adv-history-line"></div>
           <p>
             Berawal dari kepedulian terhadap masyarakat yang membutuhkan
             akses informasi dan pendampingan hukum.
@@ -986,10 +985,7 @@
 }
 
 .adv-history-line {
-  width: 45px;
-  height: 3px;
-  background: var(--adv-red);
-  margin: 20px 0;
+  display: none;
 }
 
 .adv-history-side p {

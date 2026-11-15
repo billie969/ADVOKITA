@@ -418,10 +418,7 @@
 }
 
 .adv-history-line {
-  width: 45px;
-  height: 3px;
-  background: var(--adv-red);
-  margin: 20px 0;
+  display: none;
 }
 
 .adv-history-side p {

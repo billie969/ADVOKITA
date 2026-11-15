@@ -426,14 +426,7 @@ body {
 
 .dashboard-container .section-heading::before {
   content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5px;
-  height: 18px;
-  background: var(--primary-maroon);
-  border-radius: 4px;
+  display: none;
 }
 
 /* Bagian Pengumuman */
